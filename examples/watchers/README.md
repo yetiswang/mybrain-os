@@ -17,7 +17,7 @@ state is ephemeral).
 
 ```bash
 # Edit the plist
-sed -i '' "s|<USER>|$USER|g; s|<PATH>|$HOME/path/to/script.sh|g" \
+sed -i '' "s|{{USER}}|$USER|g; s|{{WATCHER_DIR}}|$HOME/.local/share/watcher|g" \
   com.example.watcher.plist
 
 # Copy to LaunchAgents
@@ -36,4 +36,4 @@ launchctl list | grep com.example
 of the vault. It catches the case where iCloud sync silently
 loses or corrupts a file — git history is the safety net. Use
 a dedicated PAT scoped to one repo, store at
-`<watcher-dir>/github-token` (chmod 600).
+`{{WATCHER_DIR}}/github-token` (chmod 600).
