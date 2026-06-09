@@ -15,11 +15,11 @@ Your daily morning ritual.
 Run the Swift EventKit fetcher twice — once for today, once for tomorrow:
 
 ```bash
-swift ~/vault-infrastructure/scripts/fetch_calendar.swift today
+swift <watcher-dir>/scripts/fetch_calendar.swift today
 ```
 
 ```bash
-swift ~/vault-infrastructure/scripts/fetch_calendar.swift tomorrow
+swift <watcher-dir>/scripts/fetch_calendar.swift tomorrow
 ```
 
 Run both commands and capture the output.
@@ -125,7 +125,7 @@ For each meeting:
 
 No sections, no formatting, no blank templates. Just the title line and context lines.
 
-2. After writing all body files, generate a single AppleScript to `/tmp/good_morning_create_notes.applescript` following the template pattern from `~/vault-infrastructure/scripts/create_notes_template.applescript`.
+2. After writing all body files, generate a single AppleScript to `/tmp/good_morning_create_notes.applescript` following the template pattern from `<watcher-dir>/scripts/create_notes_template.applescript`.
 3. Run it:
 
 ```bash

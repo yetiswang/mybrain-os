@@ -70,7 +70,7 @@ Launch Calendar, Mail, and Notes first (AppleScript fails if the app isn't runni
 
 ```bash
 open -a Calendar && open -a Mail && open -a Notes && sleep 4 && \
-cp ~/vault-infrastructure/scripts/fetch_day.applescript \
+cp <watcher-dir>/scripts/fetch_day.applescript \
    /tmp/5pm_fetch.applescript && \
 osascript /tmp/5pm_fetch.applescript
 ```
@@ -78,7 +78,7 @@ osascript /tmp/5pm_fetch.applescript
 Then fetch sent emails separately:
 
 ```bash
-cp ~/vault-infrastructure/scripts/fetch_sent.applescript \
+cp <watcher-dir>/scripts/fetch_sent.applescript \
    /tmp/5pm_sent.applescript && \
 osascript /tmp/5pm_sent.applescript
 ```
