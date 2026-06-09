@@ -40,4 +40,4 @@ Once enrolled, audio does not leave the machine. mlx-whisper, pyannote, and the 
 
 ## Adapting
 
-See `examples/meeting-capture/README.md` for setup instructions. The pipeline is not Plaud-specific: point `transcribe_plaud.py` at any `.m4a`, `.wav`, or `.mp3` file and it works the same way. The voice-first matcher works on any audio with pyannote-quality diarisation. The signal hierarchy -- your framing first, machine reading second, calendar as ground truth -- applies regardless of which recorder you use.
+See `examples/meeting-capture/README.md` for setup instructions. The pipeline is not Plaud-specific: point `transcribe_plaud.py` at any `.m4a`, `.wav`, or `.mp3` file and it works the same way. The voice-first matcher works on any audio with pyannote-quality diarisation. The signal hierarchy (your framing first, machine reading second, calendar as ground truth) applies regardless of which recorder you use.

@@ -26,7 +26,7 @@
 ## Table of contents
 
 - [What this is](#-what-this-is)
-- [Getting started with your own agent](#-getting-started--with-your-own-agent)
+- [Getting started with your own agent](#-getting-started-with-your-own-agent)
 - [The system at a glance](#-the-system-at-a-glance)
 - [Core patterns](#-core-patterns)
 - [The multiagent model](#-the-multiagent-model)
@@ -44,7 +44,7 @@ An Obsidian vault with three AI agents working over it through MCP servers, a se
 
 ---
 
-## ⚡ Getting started -- with your own agent
+## ⚡ Getting started with your own agent
 
 This isn't pip-install. It's adopt-with-an-agent.
 
