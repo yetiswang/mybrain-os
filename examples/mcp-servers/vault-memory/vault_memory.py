@@ -327,24 +327,31 @@ def federated_search(
     all_hits: list[Hit] = []
     started = time.time()
 
-    def run_with_timeout(fn, name: str, *args, **kwargs):
-        with ThreadPoolExecutor(max_workers=1) as ex:
-            fut = ex.submit(fn, *args, **kwargs)
-            try:
-                return fut.result(timeout=PER_SOURCE_S)
-            except FutTimeout:
-                sources_timed_out.append(name)
-                return []
-
+    # Build the list of (name, fn, args) for each active source
+    import concurrent.futures
+    source_tasks: list[tuple[str, Any, tuple]] = []
     if "transcripts" in scope:
-        all_hits += run_with_timeout(search_transcripts, "transcripts", query, limit)
+        source_tasks.append(("transcripts", search_transcripts, (query, limit)))
     if "emails" in scope:
-        all_hits += run_with_timeout(search_emails, "emails", query, limit)
+        source_tasks.append(("emails", search_emails, (query, limit)))
     if "memory" in scope:
-        all_hits += run_with_timeout(search_memory, "memory", query, limit)
+        source_tasks.append(("memory", search_memory, (query, limit)))
     tree_scope = [s for s in scope if s in {"wiki","stakeholder","meeting","strategy","project","context"}]
     if tree_scope:
-        all_hits += run_with_timeout(search_vault_tree, "vault_tree", query, limit, tree_scope)
+        source_tasks.append(("vault_tree", search_vault_tree, (query, limit, tree_scope)))
+
+    # Submit all sources concurrently to one executor
+    with concurrent.futures.ThreadPoolExecutor(max_workers=len(source_tasks) or 1) as ex:
+        fut_to_name = {ex.submit(fn, *args): name for name, fn, args in source_tasks}
+        for f in concurrent.futures.as_completed(fut_to_name, timeout=PER_SOURCE_S * len(source_tasks) + 1):
+            name = fut_to_name[f]
+            try:
+                result = f.result(timeout=PER_SOURCE_S)
+                all_hits += result
+            except FutTimeout:
+                sources_timed_out.append(name)
+            except Exception:
+                sources_timed_out.append(name)
 
     # Rank: combine score with source-priority boost
     all_hits.sort(key=lambda h: -h.score)
@@ -400,7 +407,7 @@ def recent_activity(category: str, days: int = 14) -> dict:
                     "modified": time.strftime("%Y-%m-%d", time.localtime(f.stat().st_mtime)),
                     "title": f.stem,
                 })
-        return {"category": category, "days": days, "results": sorted(hits, key=lambda x: -x["modified"].__hash__())}
+        return {"category": category, "days": days, "results": sorted(hits, key=lambda x: x["modified"], reverse=True)}
     if category not in cat_map:
         raise ValueError(f"unknown category: {category}")
     cutoff = time.time() - days * 86400
@@ -416,7 +423,7 @@ def recent_activity(category: str, days: int = 14) -> dict:
                     "modified": time.strftime("%Y-%m-%d", time.localtime(f.stat().st_mtime)),
                     "title": f.stem,
                 })
-    return {"category": category, "days": days, "results": sorted(hits, key=lambda x: -x["modified"].__hash__())[:25]}
+    return {"category": category, "days": days, "results": sorted(hits, key=lambda x: x["modified"], reverse=True)[:25]}
 
 
 # ============================================================================

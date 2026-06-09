@@ -28,12 +28,30 @@ claude mcp add vault-memory \
   -- python3 <path-to-this-dir>/mem_mcp_server.py
 ```
 
-For Codex, see `~/.codex/config.toml`. For Hermes, `~/.hermes/config.yaml`.
+For Codex CLI, add to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.vault-memory]
+command = "python3"
+args = ["<path-to-this-dir>/mem_mcp_server.py"]
+```
+
+For Hermes, add to `~/.hermes/config.yaml`:
+
+```yaml
+mcp_servers:
+  vault-memory:
+    command: python3
+    args:
+      - <path-to-this-dir>/mem_mcp_server.py
+```
 
 ## Adapting
 
 - Set `VAULT_ROOT` env var to point at your vault.
 - Extend `privacy_filter.py` with patterns relevant to your jurisdiction
   (e.g. SSN for US, NIN for UK).
-- The semantic search backend assumes ChromaDB at `<vault>/.chroma`;
-  swap for any vector store with minimal changes.
+- The semantic search backend shells out to a `vault-search` CLI
+  (any binary that takes a query and returns JSON hits will do).
+  In the original author's setup this is a thin ChromaDB wrapper;
+  point `VAULT_SEARCH_BIN` at your own implementation.

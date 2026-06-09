@@ -48,7 +48,9 @@ ACCESS_LOG = LOG_DIR / "mcp_access.log"
 REDACT_LOG = LOG_DIR / "privacy_redactions.log"
 OP_LOG     = LOG_DIR / "mcp_operational.log"
 
-LOG_SALT = os.environ.get("VAULT_LOG_SALT", "my-vault-salt")  # local salt for query hashing; override via env var
+# WARNING: This default is public. Override via VAULT_LOG_SALT env var
+# with a unique random value, otherwise log hashes are predictable.
+LOG_SALT = os.environ.get("VAULT_LOG_SALT", "my-vault-salt")
 
 for p in (ACCESS_LOG, REDACT_LOG, OP_LOG):
     if not p.exists():

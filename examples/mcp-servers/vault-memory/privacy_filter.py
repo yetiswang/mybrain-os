@@ -247,7 +247,7 @@ def _redact_text(text, *, mode, config, source_tags, log):
     # 7. Deny-list names
     for name in config.deny_names:
         pat = re.compile(r"" + re.escape(name) + r"", re.IGNORECASE)
-        def _name_sub(m):
+        def _name_sub(m, _pat=pat):  # default-arg captures pat by value, not by name
             log.add("deny_name", m.group(0)); return REDACT
         text = pat.sub(_name_sub, text)
 

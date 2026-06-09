@@ -10,7 +10,44 @@ Tools:
 - transcript_get_meeting  — pull all segments of a single meeting by id
 
 Point PLAUD_DB_PATH at the SQLite file your ingestion pipeline populates.
-Schema is documented inline. Read-only.
+Read-only.
+
+# DDL (expected schema)
+#
+# CREATE TABLE meetings (
+#     id              TEXT PRIMARY KEY,   -- Plaud file_id or local label
+#     date            TEXT,               -- YYYY-MM-DD
+#     title           TEXT,
+#     duration_ms     INTEGER,
+#     language        TEXT,
+#     n_speakers      INTEGER,
+#     vault_note_path TEXT
+# );
+#
+# CREATE TABLE segments (
+#     id           INTEGER PRIMARY KEY,
+#     meeting_id   TEXT REFERENCES meetings(id),
+#     seg_idx      INTEGER,
+#     start_ms     INTEGER,
+#     end_ms       INTEGER,
+#     speaker_label TEXT,
+#     speaker_name  TEXT,
+#     content       TEXT
+# );
+#
+# CREATE TABLE speakers (
+#     meeting_id  TEXT REFERENCES meetings(id),
+#     label       TEXT,
+#     real_name   TEXT,
+#     duration_s  REAL
+# );
+#
+# CREATE VIRTUAL TABLE segments_fts USING fts5(
+#     content,
+#     tokenize='trigram',
+#     content='segments',
+#     content_rowid='id'
+# );
 
 Created 2026-06-01 during canonical-DB consolidation.
 """
@@ -42,7 +79,9 @@ def _connect() -> sqlite3.Connection:
             f"Plaud transcripts DB not found at {CANONICAL_DB}. "
             "Set PLAUD_DB_PATH env var to point at your transcripts.db."
         )
-    conn = sqlite3.connect(str(CANONICAL_DB))
+    # Read-only: server only runs SELECT queries.
+    conn = sqlite3.connect(f"file:{CANONICAL_DB}?mode=ro", uri=True)
+    conn.execute("PRAGMA query_only = ON")
     conn.row_factory = sqlite3.Row
     return conn
 
