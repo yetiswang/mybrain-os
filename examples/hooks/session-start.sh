@@ -62,15 +62,15 @@ if [[ -f "$PROJECT_FILE" ]]; then
 fi
 
 # ── 4b. <peer-network> status + open actions ────────────────────────────────────────
-<peer-network>_FILE="$VAULT/30-Projects/<peer-network>.md"
-if [[ -f "$<peer-network>_FILE" ]]; then
+PEER_NETWORK_FILE="$VAULT/30-Projects/<peer-network>.md"
+if [[ -f "$PEER_NETWORK_FILE" ]]; then
     echo ""
     echo "<peer-network> — Status at a Glance:"
-    awk '/^## Status at a Glance/,/^---/' "$<peer-network>_FILE" | head -15
+    awk '/^## Status at a Glance/,/^---/' "$PEER_NETWORK_FILE" | head -15
 
     echo ""
     echo "<peer-network> — Open Actions:"
-    awk '/^## Open Actions/,/^---/' "$<peer-network>_FILE" | grep -E "^\- \[ \]" | head -10
+    awk '/^## Open Actions/,/^---/' "$PEER_NETWORK_FILE" | grep -E "^\- \[ \]" | head -10
 fi
 
 # ── 5. Dashboard open actions ─────────────────────────────────────────────
@@ -186,6 +186,7 @@ if [[ -d "$VAULT_WATCHER/.git" ]]; then
     cd - > /dev/null
 fi
 
+# Adapt this block to your own external sources, or remove if unused.
 # <funder-programme>_project_charter (Overleaf ↔ GitHub sync)
 CHARTER_DIR="$HOME/Library/CloudStorage/Dropbox/InfrastructureStrategy/Roadmaps/ProjectDocuments/<funder-programme>_project_charter"
 if [[ -d "$CHARTER_DIR/.git" ]]; then
@@ -216,7 +217,7 @@ fi
 # ── 12. Personal and work patterns (capped at 50 lines each) ─────────────
 # Memory dir: ~/.claude/projects/<hashed-vault-path>/memory
 # The path hash is derived from your vault's absolute path — check with: claude project list
-MEMORY_DIR="~/.claude/projects/<hashed-vault-path>/memory"
+MEMORY_DIR="$HOME/.claude/projects/<hashed-vault-path>/memory"
 
 ME_PATTERNS="$MEMORY_DIR/me_patterns.md"
 WORK_PATTERNS="$MEMORY_DIR/work_patterns.md"

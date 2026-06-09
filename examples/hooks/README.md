@@ -18,10 +18,22 @@ mark context-compaction events.
 
 - `classify-message.py`: populate `STAKEHOLDER_NAMES` with the names
   you want the router to detect.
-- `protect-system-files.sh`: edit the `PROTECTED_PATHS` array at the
-  top to match your own critical files.
+- `protect-system-files.sh`: edit the `PROTECTED_HARD_BLOCK` and
+  `PROTECTED_WARN` arrays at the top to match your own critical files.
 - `validate-write.sh`: tune the frontmatter fields and minimum
   wikilink-density threshold to your vault conventions.
 
-These hooks reference paths like `<vault>` and `<watcher-dir>` —
-replace with your own.
+These hooks reference placeholder values you'll need to replace with your own:
+
+| Placeholder | What to substitute |
+|---|---|
+| `<vault>` | Path to your Obsidian vault |
+| `<watcher-dir>` | Path to your scripts/state directory |
+| `<MyProject>` | Your main project's name and folder |
+| `<github-org>` | Your GitHub org or user |
+| `<project-domain>` | Your project's public-facing domain |
+| `<funder-programme>` | Your funder or programme reference |
+| `<peer-network>` | Your peer/community network name |
+| `<my-institution>` / `<my-institute>` | Your institution name |
+| `<email-domain>` | Your institutional email domain |
+| `<hashed-vault-path>` | The Claude Code projects-dir hash for your vault (find via `claude project list`) |
