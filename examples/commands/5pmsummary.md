@@ -93,6 +93,8 @@ The inbox fetch output has four blocks: `===EMAILS===`, `===CALENDAR===`, `===NO
 
 **Critical:** always write AppleScript to a file, then run with `osascript <file>`. Never use shell heredocs — they fail in the exec environment.
 
+> (This applies to *running* AppleScript via heredoc, not to writing a script file with a heredoc, which is fine.)
+
 ## Step 1b — Update email archive + 48-hour catch-up
 
 Run the fast email extraction to capture any new emails since the last run:
@@ -111,7 +113,9 @@ sqlite3 <watcher-dir>/email-archive.db \
    WHERE date >= datetime('now','-48 hours') \
    AND sender_email NOT LIKE '%no-reply%' AND sender_email NOT LIKE '%noreply%' \
    AND sender_email NOT LIKE '%notification%' AND sender_email NOT LIKE '%alert%' \
-   AND sender_email NOT LIKE '%mailer-daemon%' AND sender_email NOT LIKE '%<internal-system>@<institution-tld>%' \
+   AND sender_email NOT LIKE '%mailer-daemon%' \
+   -- Adapt: filter out your institution's internal/no-reply addresses
+   AND sender_email NOT LIKE '%@example-internal.edu%' \
    ORDER BY date ASC LIMIT 40;"
 ```
 
@@ -127,6 +131,7 @@ Before moving on, verify the archive caught everything. Run two cross-checks and
 # Count sent today via Mail.app (ground truth)
 cat > /tmp/sent_today_count.applescript << 'EOF'
 tell application "Mail"
+  -- Replace <your-account-name> with the name of your Mail account (e.g., "Gmail", "Work")
   set theAccount to first account whose name contains "<your-account-name>"
   set theMailbox to mailbox "Sent Items" of theAccount
   set today_start to current date
@@ -152,6 +157,7 @@ If the two numbers diverge by more than 1, the archive is stale. Re-run the extr
 
 ```bash
 osascript -e 'tell application "Mail"
+  -- Replace <your-account-name> with the name of your Mail account (e.g., "Gmail", "Work")
   set theAccount to first account whose name contains "<your-account-name>"
   set theMailbox to mailbox "Sent Items" of theAccount
   set today_start to current date
@@ -220,7 +226,7 @@ For each email with attachments:
 5. **Surface in the digest:** Add a `## Attachments` section (after Emails) with flag level, summary, key intelligence, strategic relevance, and all action items. Action items from attachments must also appear in the digest's `## Actions identified today` section.
 6. **Clean up:** `rm -rf /tmp/5pm-attachments/`
 
-See the canonical SKILL.md for the full Synthesis.md template and digest format.
+Adapt this template to your own digest format — keep the structure (summary, decisions, follow-ups, tomorrow's preview), customise the field list to your workflow.
 
 ## Step 3 — Write meeting notes to vault
 

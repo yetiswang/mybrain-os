@@ -6,7 +6,7 @@ Code slash command (`.md` file in `.claude/commands/`).
 | File | Trigger | What it does |
 |------|---------|--------------|
 | `goodmorning.md` | morning | Today's calendar + priority actions + project risks. |
-| `5pmsummary.md` | end of day | 10-step ritual: fetch Mail/Calendar/Notes, write meeting notes, update stakeholders + Dashboard + projects, archive inbox, write digest. |
+| `5pmsummary.md` | end of day | 11-step ritual: from setup (Step 0) through digest write (Step 10) — fetch Mail/Calendar/Notes, write meeting notes, update stakeholders + Dashboard + projects, archive inbox, write digest. |
 | `reflect.md` | weekly | Read 7 days of diary + meetings, synthesise patterns, update two pattern files. |
 | `paper-ingest.md` | on demand | Ingest papers from Zotero into the LLM-owned knowledge wiki. |
 
