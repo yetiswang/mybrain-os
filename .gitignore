@@ -1,0 +1,35 @@
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Editor
+*.bak
+*.bak.*
+*.save
+*.pre-patch
+*~
+
+# State and secrets (defence in depth — none should ever live in this repo)
+*.db
+*.db-shm
+*.db-wal
+*.log
+*-state.json
+*-token
+*-password
+*.key
+tavily-key
+github-token
+
+# Audio
+*.m4a
+*.mp3
+*.wav
+*.flac
+*.opus
+*.ogg
