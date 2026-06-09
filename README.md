@@ -165,28 +165,28 @@ beyond my own slash commands in [`examples/commands/`](examples/commands/).
 Browse the broader catalogue at the [Claude Code plugin marketplace](https://docs.claude.com/en/docs/claude-code/plugins).
 
 **Process & engineering**
-- `superpowers:brainstorming` -- turn ideas into specs through dialogue (this README started here)
-- `superpowers:writing-plans` -- break specs into bite-sized, executable tasks
-- `superpowers:subagent-driven-development` -- fresh subagent per task + two-stage review
-- `superpowers:systematic-debugging` -- deterministic feedback loop, falsifiable hypotheses
-- `codex:rescue` -- hand off to Codex (GPT-5.x) for a second opinion, code review, or deeper diagnosis
+- `superpowers:brainstorming`: turn ideas into specs through dialogue (this README started here)
+- `superpowers:writing-plans`: break specs into bite-sized, executable tasks
+- `superpowers:subagent-driven-development`: fresh subagent per task + two-stage review
+- `superpowers:systematic-debugging`: deterministic feedback loop, falsifiable hypotheses
+- `codex:rescue`: hand off to Codex (GPT-5.x) for a second opinion, code review, or deeper diagnosis
 
 **Writing & research**
-- `writing` -- research-grade prose with verifiable citations
-- `research-grants` -- grant-writing structure
-- `peer-review` -- manuscript review
-- `scientific-brainstorming` / `hypothesis-generation` -- early-stage research thinking
-- `avoid-ai-writing` + `the-antislop` -- strip AI-isms from drafts before they ship
-- `scientific-schematics` / `infographics` -- diagrammatic figures
+- `writing`: research-grade prose with verifiable citations
+- `research-grants`: grant-writing structure
+- `peer-review`: manuscript review
+- `scientific-brainstorming` / `hypothesis-generation`: early-stage research thinking
+- `avoid-ai-writing` + `the-antislop`: strip AI-isms from drafts before they ship
+- `scientific-schematics` / `infographics`: diagrammatic figures
 
 **File handling**
-- `markitdown` -- convert almost anything (PDF/DOCX/PPTX/XLSX/HTML/EPUB/YouTube) to clean Markdown
-- `pdf` / `docx` / `pptx` / `xlsx` -- read/edit/produce office formats natively
+- `markitdown`: convert almost anything (PDF/DOCX/PPTX/XLSX/HTML/EPUB/YouTube) to clean Markdown
+- `pdf` / `docx` / `pptx` / `xlsx`: read/edit/produce office formats natively
 
 **Design & build**
-- `frontend-design` -- production-grade UI without AI slop
-- `huashu-design` -- bilingual hi-fi prototyping with explicit anti-slop checklist
-- `paper-2-web` -- turn academic papers into interactive sites
+- `frontend-design`: production-grade UI without AI slop
+- `huashu-design`: bilingual hi-fi prototyping with explicit anti-slop checklist
+- `paper-2-web`: turn academic papers into interactive sites
 
 ---
 

@@ -6,9 +6,9 @@ Audio in, structured meeting notes out. No cloud calls after the first model dow
 
 Three sources, ranked:
 
-1. **Apple Note tagged `#meeting`** -- your own framing, written during the meeting. This is the primary signal: it tells you what you were paying attention to, what felt significant in the moment.
-2. **Plaud transcript + AI summary** -- verbatim dialogue and a machine reading. Useful for things you missed or skimmed past.
-3. **Calendar invitee list** -- ground truth for who was actually in the room.
+1. **Apple Note tagged `#meeting`**: your own framing, written during the meeting. This is the primary signal: it tells you what you were paying attention to, what felt significant in the moment.
+2. **Plaud transcript + AI summary**: verbatim dialogue and a machine reading. Useful for things you missed or skimmed past.
+3. **Calendar invitee list**: ground truth for who was actually in the room.
 
 The insight comes from the gap between your framing and the machine's reading. When they diverge, that gap is worth examining.
 
