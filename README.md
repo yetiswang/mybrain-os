@@ -1,16 +1,6 @@
-```
-┌─────────────────────────────────────────────────────────┐
-│                                                         │
-│                  M Y B R A I N   O S                    │
-│                                                         │
-│       A personal operating system for a                 │
-│              knowledge worker                           │
-│                                                         │
-│    Obsidian · Claude Code · Codex · Hermes · MCP        │
-│            macOS-native rituals                         │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="docs/diagrams/banner.svg" alt="mybrain os — a personal operating system for a knowledge worker" width="100%" />
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT" />
@@ -71,11 +61,11 @@ See [`AGENTS.md`](AGENTS.md) for the full walkthrough protocol.
 
 ```mermaid
 flowchart TB
-    V[("Obsidian vault\n(iCloud + git mirror)")]
+    V[("Obsidian vault<br/>(iCloud + git mirror)")]
     CC[Claude Code]
     CX[Codex CLI]
     HR[Hermes]
-    MCP[("MCP servers\nvault-memory · vault-kg\nplaud-db · zotero")]
+    MCP[("MCP servers<br/>vault-memory · vault-kg<br/>plaud-db · zotero")]
     H[Hooks + commands]
     W[Watchers]
     P[Plaud + voice bank]
@@ -115,11 +105,11 @@ The key discipline: no agent owns a file class exclusively. Any agent can read a
 
 ```mermaid
 flowchart LR
-    A1[Claude Code\ninteractive driver]
-    A2[Codex CLI\nsecond opinion]
-    A3[Hermes\nnightly synthesis]
-    M[("MCP layer\nvault-memory · vault-kg\nzotero · plaud-db")]
-    V[("Vault\n(durable state)")]
+    A1[Claude Code<br/>interactive driver]
+    A2[Codex CLI<br/>second opinion]
+    A3[Hermes<br/>nightly synthesis]
+    M[("MCP layer<br/>vault-memory · vault-kg<br/>zotero · plaud-db")]
+    V[("Vault<br/>(durable state)")]
 
     A1 --- M --- A2
     A3 --- M
