@@ -1,4 +1,4 @@
-# Helpers — niche but reusable
+# Helpers: niche but reusable
 
 Three scripts that aren't core to the multiagent OS but are
 useful on their own.

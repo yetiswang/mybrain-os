@@ -94,8 +94,8 @@ What techniques, instruments, algorithms, or frameworks were used.
 What this paper does not address, leaves unclear, or claims without strong evidence.
 
 ## Connections
-- [[Concept-Name]] — relationship
-- [[Group-Name]] — authoring group
+- [[Concept-Name]]: relationship
+- [[Group-Name]]: authoring group
 ```
 
 ### 2b: Identify concepts
@@ -133,13 +133,13 @@ One paragraph.
 Current understanding based on available sources.
 
 ## Key Papers
-- [[YYYY-FirstAuthor-ShortTitle]] — what this paper contributes
+- [[YYYY-FirstAuthor-ShortTitle]]: what this paper contributes
 
 ## Key Groups
-- [[PI-Institution]] — if identifiable
+- [[PI-Institution]]: if identifiable
 
 ## Related Concepts
-- [[Other-Concept]] — relationship
+- [[Other-Concept]]: relationship
 
 ## Counterarguments & Limitations
 Known criticisms or open questions.
@@ -185,7 +185,7 @@ Any competitive or collaborative relevance to <MyProject>.
 Ensure all wikilinks are bidirectional:
 - Paper → Concept (in `## Connections`) and Concept → Paper (in `## Key Papers`)
 - Paper → Group (in `## Connections`) and Group → Paper (in `## Key Publications`)
-- Concept → Concept (in `## Related Concepts`) — both directions
+- Concept → Concept (in `## Related Concepts`): both directions
 
 ## Step 3: Post-processing
 

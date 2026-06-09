@@ -1,7 +1,7 @@
-# Watchers — launchd background patterns
+# Watchers: launchd background patterns
 
 Background scripts managed by macOS launchd. Each watcher
-maintains its own state file (not tracked in any git repo —
+maintains its own state file (not tracked in any git repo;
 state is ephemeral).
 
 ## Files
@@ -11,7 +11,7 @@ state is ephemeral).
 | `watch-roadmaps.sh` | every 8h | Detect changes in a Dropbox project folder, sync to vault, drop an inbox alert. |
 | `watch-books.py` | weekly | Scan a books folder for new files, append to a master catalog, infer category from path. |
 | `commit-vault.sh` | every 30 min | Auto-commit + push your vault to a private GitHub mirror (provides versioning iCloud lacks). |
-| `com.example.watcher.plist` | (template) | Generic launchd plist template — replace `<USER>` and `<PATH>` with your values. |
+| `com.example.watcher.plist` | (template) | Generic launchd plist template. Replace `<USER>` and `<PATH>` with your values. |
 
 ## Installing a watcher
 
@@ -34,6 +34,6 @@ launchctl list | grep com.example
 
 `commit-vault.sh` runs every 30 min on a private GitHub mirror
 of the vault. It catches the case where iCloud sync silently
-loses or corrupts a file — git history is the safety net. Use
+loses or corrupts a file. Git history is the safety net. Use
 a dedicated PAT scoped to one repo, store at
 `{{WATCHER_DIR}}/github-token` (chmod 600).

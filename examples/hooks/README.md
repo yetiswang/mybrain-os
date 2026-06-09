@@ -1,4 +1,4 @@
-# Hooks — Claude Code lifecycle integration
+# Hooks: Claude Code lifecycle integration
 
 Each script here is wired into a Claude Code lifecycle hook in
 `settings.local.json`. Together they protect the system from

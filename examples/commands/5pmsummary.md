@@ -1,4 +1,4 @@
-# /5pmsummary — End-of-day summary
+# /5pmsummary: End-of-day summary
 
 ## Resume support
 
@@ -30,12 +30,12 @@ Before parsing any date from email, calendar, or AppleScript output:
 ## Vault & paths
 
 - Vault: `<vault>`
-- Meetings: `20-Work/Meetings/` — filename: `YYYY-MM-DD-<slug>.md`
-- Stakeholders: `20-Work/Stakeholders/` — filename: `Firstname-Lastname.md`
+- Meetings: `20-Work/Meetings/`, filename: `YYYY-MM-DD-<slug>.md`
+- Stakeholders: `20-Work/Stakeholders/`, filename: `Firstname-Lastname.md`
 - Projects: `30-Projects/<MyProject>.md`
 - Inbox: `00-Inbox/`
 
-## Step 0 — Dynamic task list (NEW, mandatory)
+## Step 0: Dynamic task list (NEW, mandatory)
 
 After resume-state and date-discipline checks, **create a TaskCreate task list** representing every step of this run before doing any other work. The point: you see a live progress board, blockers are visible immediately, and skipped sub-steps cannot disappear silently.
 
@@ -62,9 +62,9 @@ Required tasks (one TaskCreate call per row, in order):
 
 Mark each task `in_progress` when starting it and `completed` when finished. Use TaskUpdate, not TaskCreate, after the initial seeding.
 
-If a step legitimately doesn't apply on a given day (e.g. Step 1c — no voice memos), mark it `completed` with a one-line note in the digest's QA section ("Step 1c — no voice memos found, skipped"). Never delete it.
+If a step legitimately doesn't apply on a given day (e.g. Step 1c: no voice memos), mark it `completed` with a one-line note in the digest's QA section ("Step 1c: no voice memos found, skipped"). Never delete it.
 
-## Step 1 — Fetch raw data
+## Step 1: Fetch raw data
 
 Launch Calendar, Mail, and Notes first (AppleScript fails if the app isn't running), then run both fetch scripts:
 
@@ -83,7 +83,7 @@ cp <watcher-dir>/scripts/fetch_sent.applescript \
 osascript /tmp/5pm_sent.applescript
 ```
 
-**Note on the sent script:** it reads `Sent Items` in your work email account, iterates index-by-index from most recent, and stops when the date goes before the lookback window. Large mailboxes (10k+ messages): never use `every message of mb` iteration or `whose` filters — both hang. The script is already correct; just run it as-is.
+**Note on the sent script:** it reads `Sent Items` in your work email account, iterates index-by-index from most recent, and stops when the date goes before the lookback window. Large mailboxes (10k+ messages): never use `every message of mb` iteration or `whose` filters. Both hang. The script is already correct; just run it as-is.
 
 **CRITICAL: never truncate the sent-fetch output via `head` / `tail` / Read-with-limit.** Each sent record is multi-line; truncating by line count silently drops the older half of the day. If the output is too large for context, persist it to disk (the harness already does this for `Output too large` cases) and read structured slices, or count `^---SENT---` markers and re-fetch by subject filter.
 
@@ -91,11 +91,11 @@ osascript /tmp/5pm_sent.applescript
 
 The inbox fetch output has four blocks: `===EMAILS===`, `===CALENDAR===`, `===NOTES===`, `===TOMORROW===`. Each item is separated by `---MSG---`, `---EVT---`, or `---NOTE---`. The sent fetch output has one block: `===SENT===`, with items separated by `---SENT---`.
 
-**Critical:** always write AppleScript to a file, then run with `osascript <file>`. Never use shell heredocs — they fail in the exec environment.
+**Critical:** always write AppleScript to a file, then run with `osascript <file>`. Never use shell heredocs: they fail in the exec environment.
 
 > (This applies to *running* AppleScript via heredoc, not to writing a script file with a heredoc, which is fine.)
 
-## Step 1b — Update email archive + 48-hour catch-up
+## Step 1b: Update email archive + 48-hour catch-up
 
 Run the fast email extraction to capture any new emails since the last run:
 
@@ -108,24 +108,24 @@ Idempotent, ~60-90 seconds. Keeps `email-archive.db` current for `/email-search`
 After the extractor finishes, run a **48-hour catch-up query** to surface any substantive emails that arrived after the previous day's 5pm summary ran (e.g. late-evening replies, or emails from a day where the summary was skipped):
 
 ```bash
+# Adapt: filter out your institution's internal/no-reply addresses
 sqlite3 <watcher-dir>/email-archive.db \
   "SELECT date, sender_name, sender_email, subject, substr(body,1,300) FROM emails \
    WHERE date >= datetime('now','-48 hours') \
    AND sender_email NOT LIKE '%no-reply%' AND sender_email NOT LIKE '%noreply%' \
    AND sender_email NOT LIKE '%notification%' AND sender_email NOT LIKE '%alert%' \
    AND sender_email NOT LIKE '%mailer-daemon%' \
-   -- Adapt: filter out your institution's internal/no-reply addresses
    AND sender_email NOT LIKE '%@example-internal.edu%' \
    ORDER BY date ASC LIMIT 40;"
 ```
 
-Compare against the last 2 daily digests (`00-Inbox/YYYY-MM-DD-5pm-summary.md` for today-1 and today-2). Any email thread not mentioned in either digest is a **catch-up email** — include it in Step 2's synthesis pass. Label it `[catch-up: YYYY-MM-DD]` in the digest so it is clear when it arrived.
+Compare against the last 2 daily digests (`00-Inbox/YYYY-MM-DD-5pm-summary.md` for today-1 and today-2). Any email thread not mentioned in either digest is a **catch-up email**: include it in Step 2's synthesis pass. Label it `[catch-up: YYYY-MM-DD]` in the digest so it is clear when it arrived.
 
-### Step 1b.1 — Email-DB completeness check (NEW, mandatory)
+### Step 1b.1: Email-DB completeness check (NEW, mandatory)
 
 Before moving on, verify the archive caught everything. Run two cross-checks and record the numbers in the QA section of today's digest.
 
-**Check A — Today's sent count: Mail.app vs email-archive.db.** Mail.app's `Sent Items` is the ground truth for what you sent today. Count it via AppleScript and compare against the archive:
+**Check A: Today's sent count, Mail.app vs email-archive.db.** Mail.app's `Sent Items` is the ground truth for what you sent today. Count it via AppleScript and compare against the archive:
 
 ```bash
 # Count sent today via Mail.app (ground truth)
@@ -153,7 +153,7 @@ echo "Mail.app sent today: $MAIL_SENT_COUNT | Archive sent today: $DB_SENT_COUNT
 
 If the two numbers diverge by more than 1, the archive is stale. Re-run the extractor and re-check before continuing. Record the final numbers in the QA section of the digest.
 
-**Check B — Sent-mail enumeration vs digest coverage.** Pull the full list of subjects + recipients sent today and verify each substantive thread is reflected somewhere in the digest. **Do not truncate the listing via `head`** (see warning in Step 1).
+**Check B: Sent-mail enumeration vs digest coverage.** Pull the full list of subjects + recipients sent today and verify each substantive thread is reflected somewhere in the digest. **Do not truncate the listing via `head`** (see warning in Step 1).
 
 ```bash
 osascript -e 'tell application "Mail"
@@ -173,9 +173,9 @@ end tell' 2>&1
 
 Output goes to a `/tmp/5pm_sent_today.txt` file. Cross-check this list against the digest's Emails section and the Dashboard `[ ]` items added today. Anything sent but missing from the digest is a coverage gap and must be patched before Step 10 closes.
 
-**Check C — Inbox count today.** Same idea on the inbound side: Mail.app's count of received-today vs `mailbox = 'Inbox' AND date >= date('now', 'localtime')` in the archive. Mismatch by more than 2 suggests the archive needs a fresh pass.
+**Check C: Inbox count today.** Same idea on the inbound side: Mail.app's count of received-today vs `mailbox = 'Inbox' AND date >= date('now', 'localtime')` in the archive. Mismatch by more than 2 suggests the archive needs a fresh pass.
 
-**Check D — Year-to-date telemetry (calendar year).** Capture a running ledger of correspondence volume to surface trends. Run once per `/5pmsummary` and write the numbers into the QA section:
+**Check D: Year-to-date telemetry (calendar year).** Capture a running ledger of correspondence volume to surface trends. Run once per `/5pmsummary` and write the numbers into the QA section:
 
 ```bash
 sqlite3 <watcher-dir>/email-archive.db "
@@ -188,7 +188,7 @@ Record both numbers and the Sent : Inbox ratio in the QA section's "Email-DB tel
 
 These four checks (today-sent match, today-inbox match, sent enumeration cross-check, YTD telemetry) are printed in Step 9's QA section in the digest. They are not optional.
 
-## Step 1c — Transcribe Voice Memos
+## Step 1c: Transcribe Voice Memos
 
 Check for any Voice Memos recorded today and transcribe them:
 
@@ -204,16 +204,16 @@ If the script returns results, treat each transcript as additional context for S
 
 If no memos found or script fails with permissions error, skip silently. Note in digest only if memos were processed.
 
-## Step 2 — Parse and analyse
+## Step 2: Parse and analyse
 
 From the raw output:
 
 - **Emails** (`===EMAILS===`): extract sender, subject, date, body snippet. Identify: action items, stakeholder names, project references (<MyProject>, <my-institute>, <funder-programme>, and your domain-specific keywords).
-- **Sent emails** (`===SENT===`): extract recipient, subject, date, body snippet. For each substantive reply, note: who you replied to, what was said, what decision or tone the reply reflects. This gives the full conversation picture — not just what arrived but what was done about it.
+- **Sent emails** (`===SENT===`): extract recipient, subject, date, body snippet. For each substantive reply, note who you replied to, what was said, and what decision or tone the reply reflects. This gives the full conversation picture (not just what arrived but what was done about it).
 - **Calendar events**: extract title, time, attendees. Match to Apple Notes by event title similarity.
 - **Apple Notes**: strip HTML from body (treat `<div>` as paragraph breaks, strip all tags). Parse `#meeting <Name>` convention to extract stakeholder name.
 
-## Step 2b — Process email attachments
+## Step 2b: Process email attachments
 
 The fetch script saves document attachments (PDF, DOCX, XLSX, PPTX, TXT, CSV, MD) to `/tmp/5pm-attachments/` and logs filenames in the `Attachments:` line of each email.
 
@@ -226,9 +226,9 @@ For each email with attachments:
 5. **Surface in the digest:** Add a `## Attachments` section (after Emails) with flag level, summary, key intelligence, strategic relevance, and all action items. Action items from attachments must also appear in the digest's `## Actions identified today` section.
 6. **Clean up:** `rm -rf /tmp/5pm-attachments/`
 
-Adapt this template to your own digest format — keep the structure (summary, decisions, follow-ups, tomorrow's preview), customise the field list to your workflow.
+Adapt this template to your own digest format: keep the structure (summary, decisions, follow-ups, tomorrow's preview) and customise the field list to your workflow.
 
-## Step 3 — Write meeting notes to vault
+## Step 3: Write meeting notes to vault
 
 For each `#meeting` note matched to a calendar event:
 
@@ -253,14 +253,14 @@ source: apple-notes
 
 Write `## Notes` in the vault owner's style: prose not bullets, no dashes, parentheses for asides, direct and warm. Write `## Actions` as `- [ ]` checkboxes.
 
-## Step 4 — Update stakeholder files
+## Step 4: Update stakeholder files
 
 For each person identified in today's notes, emails, or calendar attendees:
 
-### 4a — Check for existing file
+### 4a: Check for existing file
 List `20-Work/Stakeholders/`. Fuzzy-match on first or last name. Filenames use hyphen-case ASCII (e.g. `Firstname-Lastname.md`).
 
-### 4b — New stakeholder: create placeholder
+### 4b: New stakeholder: create placeholder
 ```markdown
 ---
 name: Firstname Lastname
@@ -278,38 +278,38 @@ tags: [stakeholder]
 - First encountered: YYYY-MM-DD
 
 ## Context Log
-- **YYYY-MM-DD** — <summary of first interaction>
+- **YYYY-MM-DD**: <summary of first interaction>
 ```
 
-### 4c — Existing stakeholder: append to Context Log
-Add a dated bullet: `- **YYYY-MM-DD** — <1–2 sentence summary of interaction and outcome>`
+### 4c: Existing stakeholder: append to Context Log
+Add a dated bullet: `- **YYYY-MM-DD**: <1–2 sentence summary of interaction and outcome>`
 
-## Step 5 — Update project log
+## Step 5: Update project log
 
 In `30-Projects/<MyProject>.md`, append a row to the `## Change Log` table:
 `| YYYY-MM-DD | <concise description of what happened or was decided today> |`
 
 For other active projects mentioned, do the same in their respective files.
 
-## Step 5b — Update Lab Operations docs
+## Step 5b: Update Lab Operations docs
 
 If today's emails contained equipment, vendor, procurement, maintenance, or finance activity, update the relevant docs in `30-Projects/Lab-Operations/`:
 
-- **Service-Maintenance-Log.md** — new issues, resolution updates, scheduled maintenance changes
-- **Procurement-History.md** — new POs, invoice status changes, payment confirmations
-- **Equipment-Registry.md** — instrument status changes, new installations
-- **Vendor-Map.md** — new vendor contacts, relationship changes
-- **Finance-Tracker.md** — PO status changes, reimbursement updates, budget figure corrections. Trigger keywords: finance contacts, budget codes, invoice, PO, reimbursement.
+- **Service-Maintenance-Log.md**: new issues, resolution updates, scheduled maintenance changes
+- **Procurement-History.md**: new POs, invoice status changes, payment confirmations
+- **Equipment-Registry.md**: instrument status changes, new installations
+- **Vendor-Map.md**: new vendor contacts, relationship changes
+- **Finance-Tracker.md**: PO status changes, reimbursement updates, budget figure corrections. Trigger keywords: finance contacts, budget codes, invoice, PO, reimbursement.
 
 <!-- Adapt: replace with your own finance contact names and cost centre codes. -->
 
 Skip this step entirely if no lab ops activity was detected today.
 
-## Step 5c — Sweep recent docs for action items
+## Step 5c: Sweep recent docs for action items
 
 Beyond emails/meetings/voice memos (already covered in earlier steps), the vault owner authors action items directly in strategy docs, inbox notes, project notes, lab-ops docs, and stakeholder context logs. This step catches them.
 
-### 5c.1 — Find the cutoff
+### 5c.1: Find the cutoff
 The cutoff is the most recent prior 5pm summary file:
 
 ```bash
@@ -318,7 +318,7 @@ LAST_SUMMARY=$(ls -t "<vault>/00-Inbox/"*-5pm-summary.md 2>/dev/null | head -1)
 
 If none exists, use 7 days ago. Use the file's mtime as the cutoff for `find -newer`.
 
-### 5c.2 — Sweep these folders for `.md` files modified since cutoff
+### 5c.2: Sweep these folders for `.md` files modified since cutoff
 
 ```bash
 find "20-Work/Strategy" "20-Work/Meetings" "30-Projects" "20-Work/Stakeholders" "20-Work/External-People" \
@@ -326,15 +326,15 @@ find "20-Work/Strategy" "20-Work/Meetings" "30-Projects" "20-Work/Stakeholders" 
 find "00-Inbox" -name "*.md" -newer "$LAST_SUMMARY" 2>/dev/null | grep -v "5pm-summary"
 ```
 
-`30-Projects/Lab-Operations/` is included — the user authors todos directly in `Service-Maintenance-Log.md`, `Procurement-History.md`, `Finance-Tracker.md`, `Lab-Ops-Dashboard.md`, etc.
+`30-Projects/Lab-Operations/` is included: the user authors todos directly in `Service-Maintenance-Log.md`, `Procurement-History.md`, `Finance-Tracker.md`, `Lab-Ops-Dashboard.md`, etc.
 
-### 5c.3 — Extract unchecked items
+### 5c.3: Extract unchecked items
 For each modified file, grep for lines matching `^- \[ \]` (unchecked). For each match:
 
 1. Capture full line text minus the `- [ ]` prefix.
 2. Note the source filename (without `.md`) for wikilink suffix.
 
-### 5c.4 — Deduplicate against existing Dashboard
+### 5c.4: Deduplicate against existing Dashboard
 For each candidate item:
 
 1. **Normalize** both candidate and every existing Dashboard item (`[ ]` AND `[x]`):
@@ -346,27 +346,27 @@ For each candidate item:
 2. **Compare** candidate token-set to each existing item token-set using **Jaccard similarity** (intersection / union). If max similarity > 0.5, skip the candidate.
 3. Bias: high-signal entity tokens (capitalized words, person and project names) carry double weight in the similarity calc. Two items mentioning the same person name and topic with different filler are duplicates.
 
-### 5c.5 — Categorize new items
+### 5c.5: Categorize new items
 Map source folder → Dashboard category:
 
 | Source | Dashboard category |
 |--------|-------------------|
-| `20-Work/Strategy/` | <MyProject> — Strategic |
+| `20-Work/Strategy/` | <MyProject>: Strategic |
 | `20-Work/Meetings/` | by meeting topic/attendees: <MyProject>, Partnerships, or Lab-Ops |
-| `00-Inbox/` | <MyProject> — Strategic (default) or content-keyword override |
+| `00-Inbox/` | <MyProject>: Strategic (default) or content-keyword override |
 | `30-Projects/Lab-Operations/` | Lab Operations |
-| `30-Projects/<MyProject>.md` | <MyProject> — Strategic |
-| `30-Projects/<other>` | <MyProject> — Strategic (default) |
+| `30-Projects/<MyProject>.md` | <MyProject>: Strategic |
+| `30-Projects/<other>` | <MyProject>: Strategic (default) |
 | `20-Work/Stakeholders/` or `External-People/` | Partnerships |
 
-### 5c.6 — Within-category themed subtitle placement
+### 5c.6: Within-category themed subtitle placement
 Each Dashboard category callout uses **bold-line themed subtitles** to group related items (see Step 6b). For each new item:
 
 1. **Match against existing themed subtitles** in the target category by entity overlap (e.g., item mentions a stakeholder name → find the subtitle for their workstream; mentions a project partner → find the relevant partnership subtitle).
 2. If no match, derive a new subtitle from the source doc's title (e.g., strategy doc `ProjectA-PartnerB-Bridge.md` → subtitle "Project A–Partner B bridge").
 3. Items without an obvious theme go under "**General**" subtitle.
 
-### 5c.7 — Format with source wikilink
+### 5c.7: Format with source wikilink
 Every new item written to Dashboard:
 
 ```
@@ -375,10 +375,10 @@ Every new item written to Dashboard:
 
 Where `source-note-name` is the source filename without `.md` extension. If the action item is highly specific to a strategy doc, link the strategy doc; if it came from a meeting, link the meeting note.
 
-### 5c.8 — Output for Step 6b
+### 5c.8: Output for Step 6b
 This step does not write to Dashboard directly. It produces a structured list of `(item_text, themed_subtitle, target_category, source_wikilink)` tuples for Step 6b to merge.
 
-## Step 6 — Update project memory files
+## Step 6: Update project memory files
 
 Review all project-type memory files in `~/.claude/projects/<project-memory-dir>/memory/` (files starting with `project_`).
 
@@ -387,32 +387,32 @@ Review all project-type memory files in `~/.claude/projects/<project-memory-dir>
 For each project memory file:
 1. Read the current content.
 2. Check whether today's emails, meetings, or calendar events contain new information that affects the memory (e.g., timeline changes, new risks, resolved decisions, stakeholder shifts).
-3. If yes, update the memory file using the Edit tool — revise the content, update the **Why:** and **How to apply:** sections, and adjust the description in the frontmatter if needed.
+3. If yes, update the memory file using the Edit tool: revise the content, update the **Why:** and **How to apply:** sections, and adjust the description in the frontmatter if needed.
 4. If a project memory is now stale or resolved (the situation it describes no longer applies), remove it and update `MEMORY.md`.
 5. If today's intel reveals a significant new project development not covered by any existing memory, create a new `project_*.md` file and add it to `MEMORY.md`.
 
-Only update when there is substantive new information — do not touch memory files just to confirm they are still correct.
+Only update when there is substantive new information. Do not touch memory files just to confirm they are still correct.
 
-## Step 6b — Update Dashboard
+## Step 6b: Update Dashboard
 
 Open `Dashboard.md` and reconcile against (a) today's emails/meetings/voice/attachments, (b) Step 5c's recent-docs sweep output.
 
-### 6b.0 — Source of truth principle
+### 6b.0: Source of truth principle
 Dashboard is the single source of truth for open actions. Source documents (strategy docs, meeting notes, etc.) may also have `- [ ]` items. The two are linked via the `— [[source]]` wikilink suffix. When marking an item `[x]` in Dashboard, also mark `[x]` in the source doc if present (one-way back-sync). When pruning Dashboard, never delete from sources.
 
-### 6b.1 — Mark items done
+### 6b.1: Mark items done
 Mark `[x]` when today's evidence confirms completion. Sources of evidence:
-1. **Manual `[x]`** by the vault owner during the day — already done, no action needed.
-2. **Email evidence** — sent email confirms an action was completed; inbound email confirms a request was fulfilled. Mark `[x]` and append a brief evidence note: `[x] Action — [[source]] (done YYYY-MM-DD: sent reply to <Person>)`.
-3. **Meeting outcome** — meeting note records "decided X" or "completed Y". Mark `[x]`.
+1. **Manual `[x]`** by the vault owner during the day: already done, no action needed.
+2. **Email evidence**: sent email confirms an action was completed; inbound email confirms a request was fulfilled. Mark `[x]` and append a brief evidence note: `[x] Action — [[source]] (done YYYY-MM-DD: sent reply to <Person>)`.
+3. **Meeting outcome**: meeting note records "decided X" or "completed Y". Mark `[x]`.
 
 For every `[x]` newly marked here: if the original item has a `— [[source]]` suffix, open the source doc and mark the matching item `[x]` there too. Find by Jaccard similarity > 0.7. This keeps source docs in sync.
 
-### 6b.2 — Themed subtitle structure
+### 6b.2: Themed subtitle structure
 Each category callout uses **bold-line themed subtitles** to group related items. Pattern:
 
 ```markdown
-> [!project] <MyProject> — Strategic
+> [!project] <MyProject>: Strategic
 > *Next milestone: ...*
 >
 > **<Theme A>** *(optional context note)*
@@ -429,24 +429,24 @@ Each category callout uses **bold-line themed subtitles** to group related items
 - Lab Operations: "Vendor follow-ups", "Equipment quotes", "Maintenance", "Finance"
 - Partnerships: "Active threads", "Awaiting response", "New intros to make"
 
-### 6b.3 — Add new actions
+### 6b.3: Add new actions
 Merge two streams into the categorized callouts:
 
-1. **From today's digest** (emails, meetings, attachments, voice memos) — items in the digest's `## Actions identified today` block.
-2. **From Step 5c sweep** — already categorized + themed.
+1. **From today's digest** (emails, meetings, attachments, voice memos): items in the digest's `## Actions identified today` block.
+2. **From Step 5c sweep**: already categorized + themed.
 
 For each new item:
 - Run the same dedup check (Jaccard > 0.5 against any existing Dashboard item, both `[ ]` and `[x]`). Skip duplicates.
 - Place under the matched themed subtitle. If theme doesn't exist in the target category, add it.
 - Format: `- [ ] <action> — [[source]]`. Source for emails: the email-attachment folder if available, else no wikilink (just `(source: email)`). Source for meetings: the meeting note. Source for strategy/inbox/project: the source doc.
 
-### 6b.4 — Empty-subtitle pruning
+### 6b.4: Empty-subtitle pruning
 After all `[x]` items have been moved to "Recently completed" (Step 6b.6 below), scan each category callout. Any **bold-line themed subtitle** with no remaining `- [ ]` items beneath it gets removed entirely (subtitle line + blank line). This keeps subtitles fresh.
 
-### 6b.5 — Add upcoming meetings
-For tomorrow's calendar events that need prep, add to "This Week" highlights with `— [[meeting-note-name]]` suffix.
+### 6b.5: Add upcoming meetings
+For tomorrow's calendar events that need prep, add to "This Week" highlights with a `— [[meeting-note-name]]` suffix.
 
-### 6b.6 — Project-based pruning
+### 6b.6: Project-based pruning
 For each open item, identify its project context and apply the matching rule:
 
 ### Pruning rules by project context
@@ -455,24 +455,24 @@ Read `98-Context/Projects-Overview.md` for current milestones and rhythms.
 
 **<MyProject>** (milestone-driven):
 - Evaluate items against the *current milestone* listed in Projects-Overview, not calendar age.
-- After a milestone event (strategy meeting, EB meeting, submission): sweep items that were prep for it — mark done if addressed, retire with `[retired — superseded by YYYY-MM-DD meeting]` if overtaken.
+- After a milestone event (strategy meeting, EB meeting, submission): sweep items that were prep for it. Mark done if addressed, retire with `[retired — superseded by YYYY-MM-DD meeting]` if overtaken.
 - Strategic positioning items (dean outreach, funder engagement, consortium) carry forward to the next milestone automatically.
 
 **Lab Operations** (ticket-based):
-- Vendor-dependent items stay open as long as the ticket/thread is alive — check today's emails for resolution.
+- Vendor-dependent items stay open as long as the ticket/thread is alive. Check today's emails for resolution.
 - Internal items (task trackers, budgets, access) with no email activity in 14 days: flag with `⏰ no activity since [date]`.
 - Equipment decisions with quote expiry: keep the hard deadline visible.
 
 **<peer-network>** (slow burn):
 - Quarterly rhythm. Almost nothing to prune. Only retire if direction changes.
 
-**Time-bound deliverables** (newsletter, video, plan — ship-or-miss):
+**Time-bound deliverables** (newsletter, video, plan, ship-or-miss):
 - Past deadline: check if it shipped (sent emails, evidence). If yes → mark `[x]`. If no and window closed → retire with `[retired — deadline passed]`. If no but still actionable → move to next available date.
 
 **External partnerships** (relationship-driven):
 - Never silently retire a person follow-up. Check sent emails first. If you replied → mark done. If no reply and >21 days → flag but keep (burning bridges has real cost).
 
-**Administrative** (file sync, forms, system access — one-shot):
+**Administrative** (file sync, forms, system access, one-shot):
 - >14 days overdue with no activity → retire with `[retired — overtaken]`.
 
 ### Completed items cleanup (universal)
@@ -484,7 +484,7 @@ Read `98-Context/Projects-Overview.md` for current milestones and rhythms.
 
 After a milestone event, also update `30-Projects/<MyProject>.md`:
 - Remove `[x]` items from Next Actions and Open Decisions (they're in the change log).
-- Update "Status at a Glance" — phase, next milestone, risk.
+- Update "Status at a Glance": phase, next milestone, risk.
 - Change log entries older than 60 days → condense into one summary line per month; archive full text to `90-Archive/<MyProject>-changelog/YYYY-MM.md`.
 
 The Dashboard is the single source of truth for open actions.
@@ -499,46 +499,46 @@ Also open `30-Projects/Lab-Operations/Lab-Ops-Dashboard.md` and update:
    - Apply ticket-based pruning: vendor items stay while thread is alive; internal items with no activity in 14 days get `⏰ no activity since [date]`; quote expiry dates stay visible.
    - Move completed items out of To-Do sections.
 
-2. **Stats row** — update Active POs count, Not Invoiced amount, and Instruments count if finance or equipment emails were processed today.
+2. **Stats row**: update Active POs count, Not Invoiced amount, and Instruments count if finance or equipment emails were processed today.
 
-3. **Active Issues table** — add new issues, update status of existing ones, remove resolved issues.
+3. **Active Issues table**: add new issues, update status of existing ones, remove resolved issues.
 
-4. **Budget Health / Contract Status tables** — update if financial emails (finance contacts, invoices, PO changes) were processed.
+4. **Budget Health / Contract Status tables**: update if financial emails (finance contacts, invoices, PO changes) were processed.
 
-5. **Sync with main Dashboard** — the main Dashboard's Lab Operations section should contain only the most critical lab ops items (max 5-6) with a link to the full Lab-Ops-Dashboard. Keep them in sync: if an item is marked done on either dashboard, mark it on both.
+5. **Sync with main Dashboard**: the main Dashboard's Lab Operations section should contain only the most critical lab ops items (max 5-6) with a link to the full Lab-Ops-Dashboard. Keep them in sync: if an item is marked done on either dashboard, mark it on both.
 
-## Step 7 — Tomorrow's meetings preview
+## Step 7: Tomorrow's meetings preview
 
 The `===TOMORROW===` block contains the next day's calendar events. For any meeting with known attendees who are stakeholders, note them by wikilink. Flag any meetings that need prep (strategic meetings, external stakeholders, senior contacts).
 
-## Step 8 — Rebuild vault indexes
+## Step 8: Rebuild vault indexes
 
 Regenerate both index files to reflect today's changes:
 
-### 8a — Meetings INDEX.md
+### 8a: Meetings INDEX.md
 
 Read all `.md` files in `20-Work/Meetings/` (excluding `INDEX.md`). For each file, extract frontmatter: `date`, `title`, `people`. Build a markdown table grouped by month (reverse chronological). Each meeting row: `| date | [[filename|title]] | people |`. Write to `20-Work/Meetings/INDEX.md` with frontmatter `type: index`, `auto_maintained: true`, `last_rebuilt: YYYY-MM-DD`.
 
-### 8b — Stakeholders INDEX.md
+### 8b: Stakeholders INDEX.md
 
 Read all `.md` files in `20-Work/Stakeholders/` (excluding `INDEX.md`). For each file, extract frontmatter: `name`, `org`, `relationship`. Find the most recent `**YYYY-MM-DD**` pattern in the file body as last contact date. Build a markdown table sorted by last contact (most recent first). Add a "Stale (30+ days)" section and a "No Context Log" section. Write to `20-Work/Stakeholders/INDEX.md` with frontmatter `type: index`, `auto_maintained: true`, `last_rebuilt: YYYY-MM-DD`.
 
-## Step 8c — Agentic activity recap
+## Step 8c: Agentic activity recap
 
 Review what Claude did today across all sessions. Sources:
 
-1. **`98-Context/Agentic-Log.md`** — read all session blocks dated today (primary source, written by `/sexit`)
-2. **`10-Research/wiki/log.md`** — check for today's date (`YYYY-MM-DD`) entries (paper ingests, radar runs, concept creation, landscape scans)
-3. **`10-Research/wiki/index.md`** — read current wiki totals (papers, concepts, groups)
-4. **`98-Context/Current-State.md`** — cross-check `## In flight` and `## Recent decisions` for any agentic work not captured above
+1. **`98-Context/Agentic-Log.md`**: read all session blocks dated today (primary source, written by `/sexit`)
+2. **`10-Research/wiki/log.md`**: check for today's date (`YYYY-MM-DD`) entries (paper ingests, radar runs, concept creation, landscape scans)
+3. **`10-Research/wiki/index.md`**: read current wiki totals (papers, concepts, groups)
+4. **`98-Context/Current-State.md`**: cross-check `## In flight` and `## Recent decisions` for any agentic work not captured above
 
 Compile a concise recap of agentic work: wiki building (papers ingested, concepts created, groups added), research sessions (web research, landscape scans, technology analysis), infrastructure changes (scripts updated, new skills, backup runs), and any other Claude-assisted work completed today.
 
 This recap goes into the daily digest as a `## Agentic Activity` section (after `## Emails`, before `## Actions identified today`).
 
-## Step 9 — Write daily digest to Inbox
+## Step 9: Write daily digest to Inbox
 
-Create `00-Inbox/YYYY-MM-DD-5pm-summary.md` using the **unified format below**. Section headings are a **fixed checklist** — required sections always appear (write `✓ none today` if empty), conditional sections (Attachments, Voice Memos) skip the section entirely if N/A, and the title format never deviates.
+Create `00-Inbox/YYYY-MM-DD-5pm-summary.md` using the **unified format below**. Section headings are a **fixed checklist**: required sections always appear (write `✓ none today` if empty), conditional sections (Attachments, Voice Memos) skip the section entirely if N/A, and the title format never deviates.
 
 **Title format:** `# 5pm Summary — Wkd YYYY-MM-DD` (always with weekday abbreviation: Mon/Tue/Wed/Thu/Fri/Sat/Sun).
 
@@ -548,13 +548,13 @@ Create `00-Inbox/YYYY-MM-DD-5pm-summary.md` using the **unified format below**. 
 
 These rules came out of the 2026-05-09 audit comparing May 6/7 (good) vs May 8 first-pass (drift). Apply them in every digest.
 
-**Meetings — bullet style.** One bullet per meeting. Format:
+**Meetings: bullet style.** One bullet per meeting. Format:
 ```
 - **HH:MM–HH:MM Title** (location, optional attendees as wikilinks). One-to-three sentence outcome with [[wikilinks]] for every named person/doc that has a vault file. See [[meeting-note]].
 ```
-Bold leads with the time range and title; location and outcome stay tight; trailing wikilink to the meeting note. Avoid bold-paragraph blocks — the eye loses scannability.
+Bold leads with the time range and title; location and outcome stay tight; trailing wikilink to the meeting note. Avoid bold-paragraph blocks (the eye loses scannability).
 
-**Emails — bulleted, categorized, italic-subject.** Group emails under bold-line subtitles matching Dashboard categories. Within each bucket, one bullet per thread:
+**Emails: bulleted, categorized, italic-subject.** Group emails under bold-line subtitles matching Dashboard categories. Within each bucket, one bullet per thread:
 ```
 - *Subject (HH:MM):* one-line outcome with [[wikilinks]] for every named person + doc.
 ```
@@ -652,24 +652,24 @@ tags: [daily-review]
 - (Anything broken, deferred, or unusual about today's run. Examples: index rebuild deferred; calendar fetch path failed; sent-mail head-truncation incident; voice memos permissions error.)
 
 **Steps marked completed but skipped (legitimate):**
-- (E.g. "Step 1c — no voice memos found, skipped"; "Step 8 indexes — deferred to weekly run".)
+- (E.g. "Step 1c: no voice memos found, skipped"; "Step 8 indexes: deferred to weekly run".)
 ```
 
 Write in the vault owner's voice: concise, no bullet overload, prose-first, parentheses for asides. The **QA pass section is mandatory** and must appear at the end of every digest. If a QA check passed cleanly with nothing to flag, write "✓ pass" and move on; never delete the heading.
 
-## Step 10 — QA pass
+## Step 10: QA pass
 
 Run after the digest is written, before clearing state. Fix any issues found.
 
 | Check | What to do |
 |-------|-----------|
 | **Email coverage** | Count substantive emails (inbox + sent). Verify each is covered in digest. Flag misses. |
-| **Action reconciliation** | For every new `- [ ]` in Dashboard: check sent emails — if you already replied, mark `[x]`. Verify every digest action also appears in Dashboard. Check sent emails for commitments not yet tracked. |
+| **Action reconciliation** | For every new `- [ ]` in Dashboard: check sent emails. If you already replied, mark `[x]`. Verify every digest action also appears in Dashboard. Check sent emails for commitments not yet tracked. |
 | **Attachment completeness** | For each `Attachments:` line: verify file saved, markdown conversion exists (DOCX), Synthesis.md exists, surfaced in digest. Capture scope: strategic OR work-relevant (newsletters, reports, meeting prep). |
 | **Stakeholder placement** | For any file created/updated today: check org field. People outside your institution → belong in `External-People/`, not `Stakeholders/`. Verify context logs added for all people substantively engaged. |
 | **Calendar completeness** | Every calendar event accounted for in digest. Every `#meeting`/`#talk` note matched and written. Frontmatter complete. |
 | **Sent email coverage** | Every substantive sent email reflected in digest. Commitments tracked as Dashboard actions. New contacts → stakeholder/external-people file created. |
-| **Deduplication** | Compare against the **last 2 daily digests**. Don't re-report threads already covered. Catch-up emails (`[catch-up: YYYY-MM-DD]`) from prior days should be reported even if "late" — they were missed previously. |
+| **Deduplication** | Compare against the **last 2 daily digests**. Don't re-report threads already covered. Catch-up emails (`[catch-up: YYYY-MM-DD]`) from prior days should be reported even if "late" (they were missed previously). |
 | **Wikilink integrity** | New wikilinks today → verify target file exists. Especially after file moves. |
 | **Retired items** | Retired items have clear reason tags. No silent deletions. |
 | **Pre-archive stranded actions** | Before any inbox file >14d is archived to `90-Archive/Inbox/`: scan for unchecked `- [ ]` items. If any exist, do NOT auto-archive. List them in a "Stranded actions" section in the digest with the source filename. The user must decide: act on them, move to Dashboard, or explicitly retire. Stranded items block archiving. |
@@ -682,7 +682,7 @@ The action-reconciliation check is non-negotiable: for every `- [ ]` Dashboard i
 
 ## Rules
 
-- Never overwrite existing `## Notes` content in meeting files — append after `---` if content exists.
+- Never overwrite existing `## Notes` content in meeting files. Append after `---` if content exists.
 - Mark Dashboard action items `[x]` when today's evidence confirms they are done.
 - If no `#meeting` notes are found today, skip Steps 3–4 and note it in the digest.
 - Email body is truncated at 2000 chars in the fetch script (raised from 1000 to handle forwarded emails). Forwarding headers are stripped before truncation.

@@ -1,4 +1,4 @@
-# AppleScript & EventKit — macOS-native rituals
+# AppleScript & EventKit: macOS-native rituals
 
 These scripts make Claude Code feel native on macOS by reaching
 into Apple Mail, Calendar, and Notes via AppleScript and EventKit.
@@ -12,7 +12,7 @@ into Apple Mail, Calendar, and Notes via AppleScript and EventKit.
 | `mail_compose_send.applescript` | Compose and auto-send. Has a built-in safety guard: rejects any recipient other than `ALLOWED_RECIPIENT`. |
 | `fetch_day.applescript` | Fetch one day of Inbox (smart lookback) + Calendar + Apple Notes + tomorrow's calendar. Main input for a daily briefing workflow. |
 | `fetch_email.applescript` | On-demand search by sender and/or subject. Returns full bodies. Useful for looking up a thread before replying. |
-| `fetch_calendar.swift` | EventKit Swift binary — today's or tomorrow's calendar events with attendees. Faster and more reliable than AppleScript for Exchange. |
+| `fetch_calendar.swift` | EventKit Swift binary: today's or tomorrow's calendar events with attendees. Faster and more reliable than AppleScript for Exchange. |
 | `create_notes_template.applescript` | Pattern template for creating Apple Notes entries. An agent fills and runs a generated version per session. |
 
 ## The key patterns
@@ -22,8 +22,8 @@ into Apple Mail, Calendar, and Notes via AppleScript and EventKit.
    Iterating a large mailbox without `whose` is minutes-slow.
 
 2. **Reply via `reply with opening window` + clipboard paste.**
-   Never use `set content` — it nukes the quoted thread and
-   skips the user's signature.
+   Never use `set content` (it nukes the quoted thread and
+   skips the user's signature).
 
 3. **For Calendar, EventKit Swift is faster than AppleScript.**
    AppleScript Calendar reads are flaky on modern macOS; Swift
@@ -31,7 +31,7 @@ into Apple Mail, Calendar, and Notes via AppleScript and EventKit.
 
 4. **Use file I/O for multi-line Apple Notes bodies.**
    Write body content to `/tmp/note_<n>.txt` and read via
-   `read POSIX file` — avoids shell-escaping apostrophes and quotes.
+   `read POSIX file`, which avoids shell-escaping apostrophes and quotes.
 
 ## Adapting
 

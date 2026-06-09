@@ -1,15 +1,15 @@
-# Meeting capture — local-only Plaud → vault pipeline
+# Meeting capture: local-only Plaud → vault pipeline
 
-Audio in, structured meeting notes out. No cloud calls — runs
+Audio in, structured meeting notes out. No cloud calls. Runs
 entirely on Apple Silicon.
 
 ## Stack
 
-- **[Plaud Note Pro](https://plaud.ai)** — physical recorder (or any
+- **[Plaud Note Pro](https://plaud.ai)**: physical recorder (or any
   device that exports `.m4a`).
-- **[mlx-whisper](https://github.com/ml-explore/mlx-examples/tree/main/whisper)** — ASR, ~6× realtime on M-series.
-- **[pyannote-audio 3.1](https://github.com/pyannote/pyannote-audio)** — diarisation.
-- **Voice-first sliding matcher (this repo)** — bypasses pyannote's
+- **[mlx-whisper](https://github.com/ml-explore/mlx-examples/tree/main/whisper)**: ASR, ~6× realtime on M-series.
+- **[pyannote-audio 3.1](https://github.com/pyannote/pyannote-audio)**: diarisation.
+- **Voice-first sliding matcher (this repo)**: bypasses pyannote's
   4+ similar-voice cluster merger by doing per-window cosine
   matching against an enrolled voice bank.
 
@@ -36,5 +36,5 @@ stay `Unknown`.
 1. Run `enroll_speaker.py` once per recurring meeting attendee.
 2. After ~10-15 enrolments your voice bank handles most of your
    recurring meetings automatically.
-3. The pipeline is generic — point `transcribe_plaud.py` at any
+3. The pipeline is generic. Point `transcribe_plaud.py` at any
    `.m4a`/`.wav`/`.mp3`, not just Plaud audio.
