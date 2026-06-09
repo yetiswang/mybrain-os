@@ -173,10 +173,10 @@ fi
 echo ""
 echo "GitHub repo status:"
 
-# vault-infrastructure (canonical: <watcher-dir>/)
+# watcher scripts (in <watcher-dir>/)
 VAULT_WATCHER="$HOME/.local/share/vault-watcher"
 if [[ -d "$VAULT_WATCHER/.git" ]]; then
-    echo "  vault-infrastructure (<watcher-dir>/):"
+    echo "  watcher scripts (<watcher-dir>/):"
     cd "$VAULT_WATCHER"
     git log --oneline -3 2>/dev/null | sed 's/^/    /'
     DIRTY=$(git status --short 2>/dev/null | { grep -v "^??" || true; } | wc -l | tr -d ' ')

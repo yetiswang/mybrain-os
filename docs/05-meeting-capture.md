@@ -22,7 +22,7 @@ The insight comes from the gap between your framing and the machine's reading. W
 6. Optional: cross-check against the Plaud cloud transcript. If you manually labelled speakers in the Plaud app, those labels are ground truth and override the local result.
 7. Time-match the recording to an Apple Calendar event within a 15-minute window. Pull the invitee list.
 8. Reconcile any Unknown speakers via the name-verification ladder: calendar invitees first, then the stakeholder index, then the email archive, then ask.
-9. Write the meeting note with four sections: Yuyang's framing, Discussion, Power dynamics and insights, Actions.
+9. Write the meeting note with four sections: Your framing, Discussion, Power dynamics and insights, Actions.
 10. Push actionable items to the Dashboard with a back-link to the meeting note.
 11. Ingest into the searchable SQLite + FTS5 corpus (see `examples/mcp-servers/plaud-db/`).
 
