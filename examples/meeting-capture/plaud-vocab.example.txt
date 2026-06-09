@@ -1,0 +1,18 @@
+# Vocabulary file for Whisper initial-prompt anchoring.
+# One entry per line. Whisper uses this to bias decoding toward
+# correct spellings of names, organisations, acronyms.
+#
+# Replace these examples with names relevant to your meetings.
+
+# People (first + last)
+Alice Smith
+Bob Jones
+
+# Organisations
+Acme Research
+Example University
+
+# Acronyms / domain terms
+SDL
+MCP
+ROS
