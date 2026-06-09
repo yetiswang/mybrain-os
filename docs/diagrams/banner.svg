@@ -1,67 +1,205 @@
-<svg viewBox="0 0 1280 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="mybrain os — a personal operating system for a knowledge worker">
-  <!-- Background: warm paper canvas -->
-  <rect width="1280" height="320" fill="#FAF6F0"/>
-
-  <!-- Top accent rule -->
-  <rect x="0" y="0" width="1280" height="6" fill="#C8102E"/>
-
-  <!-- Bottom hairline -->
-  <line x1="80" y1="296" x2="1200" y2="296" stroke="#E5E1D8" stroke-width="1"/>
-
-  <!-- Typography column (left) -->
-  <g transform="translate(80, 130)">
-    <!-- Wordmark -->
-    <text font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-          font-size="92" font-weight="700" fill="#111111" letter-spacing="-2.5">
-      mybrain<tspan fill="#C8102E">·</tspan>os
-    </text>
-
-    <!-- Tagline -->
-    <text y="44" font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-          font-size="22" font-weight="400" fill="#4B5563">
-      a personal operating system for a knowledge worker
-    </text>
-
-    <!-- Stack caps -->
-    <text y="88" font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-          font-size="13" font-weight="500" fill="#9CA3AF" letter-spacing="2.4">
-      OBSIDIAN · CLAUDE CODE · CODEX · HERMES · MCP · macOS
-    </text>
+<svg viewBox="0 0 240 48" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" role="img" aria-label="mybrain os pixel art banner">
+  <rect width="240" height="48" fill="#FAF6F0"/>
+  <g fill="#1A1A1A">
+    <rect x="92" y="12" width="1" height="1"/>
+    <rect x="96" y="12" width="1" height="1"/>
+    <rect x="92" y="13" width="1" height="1"/>
+    <rect x="93" y="13" width="1" height="1"/>
+    <rect x="95" y="13" width="1" height="1"/>
+    <rect x="96" y="13" width="1" height="1"/>
+    <rect x="92" y="14" width="1" height="1"/>
+    <rect x="94" y="14" width="1" height="1"/>
+    <rect x="96" y="14" width="1" height="1"/>
+    <rect x="92" y="15" width="1" height="1"/>
+    <rect x="94" y="15" width="1" height="1"/>
+    <rect x="96" y="15" width="1" height="1"/>
+    <rect x="92" y="16" width="1" height="1"/>
+    <rect x="96" y="16" width="1" height="1"/>
+    <rect x="92" y="17" width="1" height="1"/>
+    <rect x="96" y="17" width="1" height="1"/>
+    <rect x="92" y="18" width="1" height="1"/>
+    <rect x="96" y="18" width="1" height="1"/>
+    <rect x="98" y="12" width="1" height="1"/>
+    <rect x="102" y="12" width="1" height="1"/>
+    <rect x="98" y="13" width="1" height="1"/>
+    <rect x="102" y="13" width="1" height="1"/>
+    <rect x="99" y="14" width="1" height="1"/>
+    <rect x="101" y="14" width="1" height="1"/>
+    <rect x="100" y="15" width="1" height="1"/>
+    <rect x="100" y="16" width="1" height="1"/>
+    <rect x="100" y="17" width="1" height="1"/>
+    <rect x="100" y="18" width="1" height="1"/>
+    <rect x="104" y="12" width="1" height="1"/>
+    <rect x="105" y="12" width="1" height="1"/>
+    <rect x="106" y="12" width="1" height="1"/>
+    <rect x="107" y="12" width="1" height="1"/>
+    <rect x="104" y="13" width="1" height="1"/>
+    <rect x="108" y="13" width="1" height="1"/>
+    <rect x="104" y="14" width="1" height="1"/>
+    <rect x="108" y="14" width="1" height="1"/>
+    <rect x="104" y="15" width="1" height="1"/>
+    <rect x="105" y="15" width="1" height="1"/>
+    <rect x="106" y="15" width="1" height="1"/>
+    <rect x="107" y="15" width="1" height="1"/>
+    <rect x="104" y="16" width="1" height="1"/>
+    <rect x="108" y="16" width="1" height="1"/>
+    <rect x="104" y="17" width="1" height="1"/>
+    <rect x="108" y="17" width="1" height="1"/>
+    <rect x="104" y="18" width="1" height="1"/>
+    <rect x="105" y="18" width="1" height="1"/>
+    <rect x="106" y="18" width="1" height="1"/>
+    <rect x="107" y="18" width="1" height="1"/>
+    <rect x="110" y="12" width="1" height="1"/>
+    <rect x="111" y="12" width="1" height="1"/>
+    <rect x="112" y="12" width="1" height="1"/>
+    <rect x="113" y="12" width="1" height="1"/>
+    <rect x="110" y="13" width="1" height="1"/>
+    <rect x="114" y="13" width="1" height="1"/>
+    <rect x="110" y="14" width="1" height="1"/>
+    <rect x="114" y="14" width="1" height="1"/>
+    <rect x="110" y="15" width="1" height="1"/>
+    <rect x="111" y="15" width="1" height="1"/>
+    <rect x="112" y="15" width="1" height="1"/>
+    <rect x="113" y="15" width="1" height="1"/>
+    <rect x="110" y="16" width="1" height="1"/>
+    <rect x="112" y="16" width="1" height="1"/>
+    <rect x="110" y="17" width="1" height="1"/>
+    <rect x="113" y="17" width="1" height="1"/>
+    <rect x="110" y="18" width="1" height="1"/>
+    <rect x="114" y="18" width="1" height="1"/>
+    <rect x="117" y="12" width="1" height="1"/>
+    <rect x="118" y="12" width="1" height="1"/>
+    <rect x="119" y="12" width="1" height="1"/>
+    <rect x="116" y="13" width="1" height="1"/>
+    <rect x="120" y="13" width="1" height="1"/>
+    <rect x="116" y="14" width="1" height="1"/>
+    <rect x="120" y="14" width="1" height="1"/>
+    <rect x="116" y="15" width="1" height="1"/>
+    <rect x="117" y="15" width="1" height="1"/>
+    <rect x="118" y="15" width="1" height="1"/>
+    <rect x="119" y="15" width="1" height="1"/>
+    <rect x="120" y="15" width="1" height="1"/>
+    <rect x="116" y="16" width="1" height="1"/>
+    <rect x="120" y="16" width="1" height="1"/>
+    <rect x="116" y="17" width="1" height="1"/>
+    <rect x="120" y="17" width="1" height="1"/>
+    <rect x="116" y="18" width="1" height="1"/>
+    <rect x="120" y="18" width="1" height="1"/>
+    <rect x="123" y="12" width="1" height="1"/>
+    <rect x="124" y="12" width="1" height="1"/>
+    <rect x="125" y="12" width="1" height="1"/>
+    <rect x="124" y="13" width="1" height="1"/>
+    <rect x="124" y="14" width="1" height="1"/>
+    <rect x="124" y="15" width="1" height="1"/>
+    <rect x="124" y="16" width="1" height="1"/>
+    <rect x="124" y="17" width="1" height="1"/>
+    <rect x="123" y="18" width="1" height="1"/>
+    <rect x="124" y="18" width="1" height="1"/>
+    <rect x="125" y="18" width="1" height="1"/>
+    <rect x="128" y="12" width="1" height="1"/>
+    <rect x="132" y="12" width="1" height="1"/>
+    <rect x="128" y="13" width="1" height="1"/>
+    <rect x="129" y="13" width="1" height="1"/>
+    <rect x="132" y="13" width="1" height="1"/>
+    <rect x="128" y="14" width="1" height="1"/>
+    <rect x="130" y="14" width="1" height="1"/>
+    <rect x="132" y="14" width="1" height="1"/>
+    <rect x="128" y="15" width="1" height="1"/>
+    <rect x="131" y="15" width="1" height="1"/>
+    <rect x="132" y="15" width="1" height="1"/>
+    <rect x="128" y="16" width="1" height="1"/>
+    <rect x="132" y="16" width="1" height="1"/>
+    <rect x="128" y="17" width="1" height="1"/>
+    <rect x="132" y="17" width="1" height="1"/>
+    <rect x="128" y="18" width="1" height="1"/>
+    <rect x="132" y="18" width="1" height="1"/>
+    <rect x="134" y="15" width="1" height="1"/>
+    <rect x="137" y="12" width="1" height="1"/>
+    <rect x="138" y="12" width="1" height="1"/>
+    <rect x="139" y="12" width="1" height="1"/>
+    <rect x="136" y="13" width="1" height="1"/>
+    <rect x="140" y="13" width="1" height="1"/>
+    <rect x="136" y="14" width="1" height="1"/>
+    <rect x="140" y="14" width="1" height="1"/>
+    <rect x="136" y="15" width="1" height="1"/>
+    <rect x="140" y="15" width="1" height="1"/>
+    <rect x="136" y="16" width="1" height="1"/>
+    <rect x="140" y="16" width="1" height="1"/>
+    <rect x="136" y="17" width="1" height="1"/>
+    <rect x="140" y="17" width="1" height="1"/>
+    <rect x="137" y="18" width="1" height="1"/>
+    <rect x="138" y="18" width="1" height="1"/>
+    <rect x="139" y="18" width="1" height="1"/>
+    <rect x="143" y="12" width="1" height="1"/>
+    <rect x="144" y="12" width="1" height="1"/>
+    <rect x="145" y="12" width="1" height="1"/>
+    <rect x="146" y="12" width="1" height="1"/>
+    <rect x="142" y="13" width="1" height="1"/>
+    <rect x="142" y="14" width="1" height="1"/>
+    <rect x="143" y="15" width="1" height="1"/>
+    <rect x="144" y="15" width="1" height="1"/>
+    <rect x="145" y="15" width="1" height="1"/>
+    <rect x="146" y="16" width="1" height="1"/>
+    <rect x="146" y="17" width="1" height="1"/>
+    <rect x="142" y="18" width="1" height="1"/>
+    <rect x="143" y="18" width="1" height="1"/>
+    <rect x="144" y="18" width="1" height="1"/>
+    <rect x="145" y="18" width="1" height="1"/>
   </g>
-
-  <!-- Architecture motif (right) -->
-  <g transform="translate(1000, 160)">
-    <!-- Connecting lines from agents to vault -->
-    <line x1="0" y1="0" x2="-104" y2="-74" stroke="#C8102E" stroke-width="1.5" opacity="0.55"/>
-    <line x1="0" y1="0" x2="-118" y2="6" stroke="#C8102E" stroke-width="1.5" opacity="0.55"/>
-    <line x1="0" y1="0" x2="-104" y2="86" stroke="#C8102E" stroke-width="1.5" opacity="0.55"/>
-
-    <!-- Vault circle (centre) -->
-    <circle cx="0" cy="0" r="50" fill="#FAF6F0" stroke="#2D8B8B" stroke-width="2.5"/>
-    <text x="0" y="6" text-anchor="middle"
-          font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-          font-size="16" font-weight="600" fill="#2D8B8B">vault</text>
-
-    <!-- Agent nodes + labels (right-aligned) -->
-    <g font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-       font-size="14" font-weight="500" fill="#111111" text-anchor="end">
-
-      <circle cx="-104" cy="-74" r="6" fill="#111111"/>
-      <text x="-118" y="-69">Claude Code</text>
-
-      <circle cx="-118" cy="6" r="6" fill="#111111"/>
-      <text x="-132" y="11">Codex CLI</text>
-
-      <circle cx="-104" cy="86" r="6" fill="#111111"/>
-      <text x="-118" y="91">Hermes</text>
-    </g>
-
-    <!-- MCP layer hint (under vault) -->
-    <text x="0" y="86"
-          text-anchor="middle"
-          font-family="system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-          font-size="11" font-weight="500" fill="#9CA3AF" letter-spacing="2">
-      VIA MCP
-    </text>
+  <g fill="#C8102E">
+    <rect x="107" y="34" width="1" height="1"/>
+    <rect x="108" y="34" width="1" height="1"/>
+    <rect x="109" y="34" width="1" height="1"/>
+    <rect x="110" y="34" width="1" height="1"/>
+    <rect x="111" y="34" width="1" height="1"/>
+    <rect x="112" y="34" width="1" height="1"/>
+    <rect x="113" y="34" width="1" height="1"/>
+    <rect x="114" y="34" width="1" height="1"/>
+    <rect x="115" y="34" width="1" height="1"/>
+    <rect x="116" y="34" width="1" height="1"/>
+    <rect x="117" y="34" width="1" height="1"/>
+    <rect x="123" y="34" width="1" height="1"/>
+    <rect x="124" y="34" width="1" height="1"/>
+    <rect x="125" y="34" width="1" height="1"/>
+    <rect x="126" y="34" width="1" height="1"/>
+    <rect x="127" y="34" width="1" height="1"/>
+    <rect x="128" y="34" width="1" height="1"/>
+    <rect x="129" y="34" width="1" height="1"/>
+    <rect x="130" y="34" width="1" height="1"/>
+    <rect x="131" y="34" width="1" height="1"/>
+    <rect x="132" y="34" width="1" height="1"/>
+    <rect x="133" y="34" width="1" height="1"/>
+    <rect x="120" y="27" width="1" height="1"/>
+    <rect x="120" y="28" width="1" height="1"/>
+    <rect x="120" y="29" width="1" height="1"/>
+    <rect x="120" y="30" width="1" height="1"/>
+    <rect x="120" y="31" width="1" height="1"/>
+  </g>
+  <g fill="#2D8B8B">
+    <rect x="118" y="32" width="1" height="1"/>
+    <rect x="118" y="36" width="1" height="1"/>
+    <rect x="118" y="32" width="1" height="1"/>
+    <rect x="122" y="32" width="1" height="1"/>
+    <rect x="119" y="32" width="1" height="1"/>
+    <rect x="119" y="36" width="1" height="1"/>
+    <rect x="118" y="33" width="1" height="1"/>
+    <rect x="122" y="33" width="1" height="1"/>
+    <rect x="120" y="32" width="1" height="1"/>
+    <rect x="120" y="36" width="1" height="1"/>
+    <rect x="118" y="34" width="1" height="1"/>
+    <rect x="122" y="34" width="1" height="1"/>
+    <rect x="121" y="32" width="1" height="1"/>
+    <rect x="121" y="36" width="1" height="1"/>
+    <rect x="118" y="35" width="1" height="1"/>
+    <rect x="122" y="35" width="1" height="1"/>
+    <rect x="122" y="32" width="1" height="1"/>
+    <rect x="122" y="36" width="1" height="1"/>
+    <rect x="118" y="36" width="1" height="1"/>
+    <rect x="122" y="36" width="1" height="1"/>
+  </g>
+  <g fill="#1A1A1A">
+    <rect x="105" y="33" width="2" height="2"/>
+    <rect x="133" y="33" width="2" height="2"/>
+    <rect x="119" y="25" width="2" height="2"/>
   </g>
 </svg>
