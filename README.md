@@ -61,7 +61,7 @@ See [`AGENTS.md`](AGENTS.md) for the full walkthrough protocol.
 
 ```mermaid
 flowchart TB
-    V[("Obsidian vault<br/>(iCloud + git mirror)")]
+    V[("Obsidian vault<br/>iCloud + git mirror")]
     CC[Claude Code]
     CX[Codex CLI]
     HR[Hermes]
@@ -109,7 +109,7 @@ flowchart LR
     A2[Codex CLI<br/>second opinion]
     A3[Hermes<br/>nightly synthesis]
     M[("MCP layer<br/>vault-memory · vault-kg<br/>zotero · plaud-db")]
-    V[("Vault<br/>(durable state)")]
+    V[("Vault<br/>durable state")]
 
     A1 --- M --- A2
     A3 --- M
