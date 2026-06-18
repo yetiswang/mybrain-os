@@ -4,6 +4,16 @@ Snapshot semantics. See the README's "Getting started" section.
 Each entry: date, summary, private-repo reference (for the author's
 own tracking; readers can ignore).
 
+## v0.1.1 (2026-06-18)
+
+Adds an office-automation pattern group, drawn from a real team-directory workflow.
+
+- New doc: `docs/07-office-automation.md` — tracking a shared spreadsheet, generating directory cards.
+- New `examples/office/`: `xlsx_change_monitor.py` (snapshot/diff/attributed change-log for a workbook several people edit online), `pptx_card_from_form.py` (a form entry into a slide card by mirroring a template slide + clipped-circle photo), `pptx_stamp_updated.py` (idempotent "Updated ..." title-slide stamp).
+- README "Core patterns" grid gains an Office automation tile.
+
+Private-repo reference: team-directory automation (profile cards + shared-sheet monitor + deck auto-stamp), 2026-06-17 to 2026-06-18.
+
 ## v0.1.0 (2026-06-09)
 
 First public snapshot. Includes:
