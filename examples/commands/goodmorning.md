@@ -113,17 +113,17 @@ If the user confirms with any affirmative response ("yes", "sure", "ok", "go ahe
 Each note is minimal: just a title and short stakeholder context. The vault owner fills in their own notes during the meeting. The `/5pmsummary` skill picks up these notes later and formats them into vault meeting notes.
 
 For each meeting:
-1. Write the note body to `/tmp/gm_note_<n>.txt` using the Write tool. The body is plain text, minimal:
+1. Write the note body to `/tmp/gm_note_<n>.html` using the Write tool. **Apple Notes bodies are HTML** — plain text collapses all line breaks into a single blob. Use one `<div>` per line, `<div><br></div>` for blank lines, `<b>` for the title and names:
 
+```html
+<div><b>[Meeting Title], YYYY-MM-DD HH:MM</b></div>
+<div>[Location if any]</div>
+<div><br></div>
+<div><b>[Name]:</b> [1-sentence stakeholder context from vault]</div>
+<div><b>[Name]:</b> [1-sentence context or "no vault record"]</div>
 ```
-[Meeting Title], YYYY-MM-DD HH:MM
-[Location if any]
 
-[Name]: [1-sentence stakeholder context from vault]
-[Name]: [1-sentence context or "no vault record"]
-```
-
-No sections, no formatting, no blank templates. Just the title line and context lines.
+No sections beyond this, no blank templates. Just the title line and context lines. Read the file in AppleScript with `as «class utf8»`.
 
 2. After writing all body files, generate a single AppleScript to `/tmp/good_morning_create_notes.applescript` following the template pattern from `<watcher-dir>/scripts/create_notes_template.applescript`.
 3. Run it:

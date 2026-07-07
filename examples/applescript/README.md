@@ -29,9 +29,12 @@ into Apple Mail, Calendar, and Notes via AppleScript and EventKit.
    AppleScript Calendar reads are flaky on modern macOS; Swift
    + EventKit is solid and exposes attendee email addresses cleanly.
 
-4. **Use file I/O for multi-line Apple Notes bodies.**
-   Write body content to `/tmp/note_<n>.txt` and read via
-   `read POSIX file`, which avoids shell-escaping apostrophes and quotes.
+4. **Use file I/O for multi-line Apple Notes bodies — and write them as HTML.**
+   Notes renders the body as HTML: plain text collapses every line break
+   into one paragraph. Write `<div>`-per-line HTML (with `<div><br></div>`
+   for blank lines and `<b>` for emphasis) to `/tmp/note_<n>.html` and read
+   via `read POSIX file ... as «class utf8»`, which also avoids
+   shell-escaping apostrophes and quotes.
 
 ## Adapting
 
