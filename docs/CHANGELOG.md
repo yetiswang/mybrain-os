@@ -4,11 +4,23 @@ Snapshot semantics. See the README's "Getting started" section.
 Each entry: date, summary, private-repo reference (for the author's
 own tracking; readers can ignore).
 
+## v0.2.0 (2026-10-01)
+
+Three months of running the system, folded back in.
+
+- **Meeting capture rewritten** (`docs/05`): the tooling is now the separate [plaudio](https://github.com/yetiswang/plaudio) package; the three v0.1 scripts are retired. New in the method: a persistent audio archive, the turbo model for long recordings, the cluster vote that combines diarisation with voice-bank matches, and the six-rung speaker-resolution ladder. New `examples/meeting-capture/cluster_vote.py`.
+- **New doc `docs/08-keeping-automations-honest.md`**: liveness versus efficacy, with the silent failures that motivated it. New `examples/reliability/health_sentinel.py`.
+- **`examples/commands/5pmsummary.md` hardened**: plausibility guard against Mail.app's own count for the same window, attachment reconciliation from the email archive, exit-code checks, absolute-path sweeps, a rule for rebuilt dashboard views, and an append-only run log.
+- **`examples/applescript/fetch_day.applescript`**: `FETCH_LOOKBACK_HOURS` override for catch-up runs and a `===META===` block reporting the window used. New `count_inbox_window.applescript` for the guard.
+- README, AGENTS.md: new tile and reading order; em-dashes removed from prose docs.
+
+Private-repo reference: fetch-window fix 2026-09-16; vacuous-pass audit 2026-09-14; plaudio diarise CLI 2026-06-18; turbo-model lesson 2026-09-25.
+
 ## v0.1.1 (2026-06-18)
 
 Adds an office-automation pattern group, drawn from a real team-directory workflow.
 
-- New doc: `docs/07-office-automation.md` — tracking a shared spreadsheet, generating directory cards.
+- New doc: `docs/07-office-automation.md`: tracking a shared spreadsheet, generating directory cards.
 - New `examples/office/`: `xlsx_change_monitor.py` (snapshot/diff/attributed change-log for a workbook several people edit online), `pptx_card_from_form.py` (a form entry into a slide card by mirroring a template slide + clipped-circle photo), `pptx_stamp_updated.py` (idempotent "Updated ..." title-slide stamp).
 - README "Core patterns" grid gains an Office automation tile.
 

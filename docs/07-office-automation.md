@@ -4,7 +4,7 @@ Not everything a knowledge worker touches is a Markdown note. Some of it is a
 spreadsheet five people edit online, or a slide deck that has to stay visually
 consistent while it grows one entry at a time. These are the unglamorous
 surfaces where manual work quietly accumulates, and they automate well because
-the file formats are just zipped XML. No cloud APIs are involved — the scripts
+the file formats are just zipped XML. No cloud APIs are involved: the scripts
 operate on the locally-synced copies, so they work the same whether the file
 lives in OneDrive, SharePoint, a Teams library, or a synced Drive folder.
 
@@ -26,8 +26,8 @@ It runs as a three-step ritual around any edit:
 
 Anything that appears before you edit was someone else's change; anything
 after is yours. That temporal split is what lets one diff engine attribute
-both sides without any per-user tracking. Rows are keyed by a key column — a
-name or an ID — so the log reads `CHANGED <row>: Email a -> b` rather than by
+both sides without any per-user tracking. Rows are keyed by a key column (a
+name or an ID), so the log reads `CHANGED <row>: Email a -> b` rather than by
 opaque cell coordinates, and the change-log file lives next to the sheet where
 collaborators can read it. The baseline stays private and out of the shared
 folder.
@@ -37,7 +37,7 @@ pulled to local disk. If someone just saved, wait a moment before diffing.
 
 ## Generating directory cards
 
-A directory deck — one slide per person, lab, or team — is tedious to extend
+A directory deck (one slide per person, lab, or team) is tedious to extend
 by hand and easy to make inconsistent. `python-pptx` has no clean "duplicate
 this slide", but it can deep-copy the XML of individual shapes, and that turns
 out to be enough.
@@ -61,5 +61,5 @@ repeatable ritual so the agent runs it the same way every time, and so the
 human record (who changed what; when the deck was last touched) is a
 by-product of doing the work, not a separate chore. The spreadsheet monitor in
 particular composes with the [hooks and slash commands](03-hooks-and-skills.md)
-— it's the kind of step an edit-the-deck command runs automatically before and
+It is the kind of step an edit-the-deck command runs automatically before and
 after it touches the file.

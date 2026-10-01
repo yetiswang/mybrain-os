@@ -1,40 +1,26 @@
-# Meeting capture: local-only Plaud → vault pipeline
+# Meeting capture
 
-Audio in, structured meeting notes out. No cloud calls. Runs
-entirely on Apple Silicon.
-
-## Stack
-
-- **[Plaud Note Pro](https://plaud.ai)**: physical recorder (or any
-  device that exports `.m4a`).
-- **[mlx-whisper](https://github.com/ml-explore/mlx-examples/tree/main/whisper)**: ASR, ~6× realtime on M-series.
-- **[pyannote-audio 3.1](https://github.com/pyannote/pyannote-audio)**: diarisation.
-- **Voice-first sliding matcher (this repo)**: bypasses pyannote's
-  4+ similar-voice cluster merger by doing per-window cosine
-  matching against an enrolled voice bank.
+The scripts that lived here in v0.1 (`transcribe_plaud.py`, `enroll_speaker.py`, `match_voice_sliding.py`) are retired. The pipeline is now the **[plaudio](https://github.com/yetiswang/plaudio)** package. The method is in [`docs/05-meeting-capture.md`](../../docs/05-meeting-capture.md).
 
 ## Files
 
 | File | What it does |
 |------|--------------|
-| `transcribe_plaud.py` | mlx-whisper ASR with vocab initial-prompt + pyannote diarisation. Produces JSON. |
-| `enroll_speaker.py` | Enrol a recurring speaker from a ~15-60s clean sample. Stores embedding in `plaud-voice-profiles.json`. |
-| `match_voice_sliding.py` | Per-window cosine matching against the voice bank. Run on the JSON from `transcribe_plaud.py` to relabel speakers. |
-| `plaud-vocab.example.txt` | Template vocab file. Replace with your names + organisations + acronyms. |
+| `plaud-vocab.example.txt` | Template vocabulary file for the transcription prompt. Replace with your names, organisations and acronyms. |
+| `cluster_vote.py` | Gives each diarisation cluster the enrolled name that won most of its matched seconds. |
 
-## The novel piece
+## One recording, end to end
 
-`match_voice_sliding.py` is the part worth reading. pyannote's
-default clustering merges similar voices when ≥4 close-voice
-speakers are in a meeting. The sliding matcher uses 2-second
-windows with per-window cosine matching against the enrolled
-voice bank, sidestepping the merge entirely. Unmatched windows
-stay `Unknown`.
+```bash
+plaudio transcribe meeting.ogg --model mlx-community/whisper-large-v3-turbo \
+  --vocab plaud-vocab.txt --language en --out out/
+plaudio diarise meeting.ogg out/meeting.json --out out/ --min-speakers 3 --max-speakers 7
+cp out/meeting.plaud.json out/meeting.diar.plaud.json        # match overwrites unmatched clusters
+plaudio match meeting.ogg out/meeting.plaud.json --threshold 0.55 --report
+python cluster_vote.py out/meeting.diar.plaud.json out/meeting.plaud.json
+plaudio label meeting.ogg out/meeting.diar.plaud.json \
+  --batch-label "SPEAKER_03=Alice Smith,SPEAKER_05=Bob Jones"  # from the vote + the ladder
+plaudio db ingest out/meeting.diar.plaud.json --meeting-id <id> --date YYYY-MM-DD --title "..."
+```
 
-## Adapting
-
-1. Run `enroll_speaker.py` once per recurring meeting attendee.
-2. After ~10-15 enrolments your voice bank handles most of your
-   recurring meetings automatically.
-3. The pipeline is generic. Point `transcribe_plaud.py` at any
-   `.m4a`/`.wav`/`.mp3`, not just Plaud audio.
+Run one recording at a time; both models are memory-heavy.

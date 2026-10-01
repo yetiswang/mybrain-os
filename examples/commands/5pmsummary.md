@@ -66,14 +66,37 @@ If a step legitimately doesn't apply on a given day (e.g. Step 1c: no voice memo
 
 ## Step 1: Fetch raw data
 
-Launch Calendar, Mail, and Notes first (AppleScript fails if the app isn't running), then run both fetch scripts:
+Launch Calendar, Mail, and Notes first (AppleScript fails if the app isn't running), then run the fetch with a **plausibility guard**: compare what the script harvested against what Mail.app itself reports for the same window, and retry when the harvest is implausibly small.
 
 ```bash
-open -a Calendar && open -a Mail && open -a Notes && sleep 4 && \
-cp <watcher-dir>/scripts/fetch_day.applescript \
-   /tmp/5pm_fetch.applescript && \
-osascript /tmp/5pm_fetch.applescript
+# Catch-up runs: if this is not the usual end-of-day run for the day being summarised
+# (e.g. you missed yesterday and run it this morning), widen the window first:
+# export FETCH_LOOKBACK_HOURS=40   # hours back from today 00:00
+
+open -a Calendar && open -a Mail && open -a Notes && sleep 6 && \
+cp <watcher-dir>/scripts/fetch_day.applescript /tmp/5pm_fetch.applescript && \
+osascript /tmp/5pm_fetch.applescript > /tmp/5pm_fetch_out.txt 2>&1
+
+# The script prints the window it actually used in a ===META=== block
+# (lookback_hours: N). Size the guard from that number; never hardcode a window here.
+LB=$(awk '/^lookback_hours:/{print $2; exit}' /tmp/5pm_fetch_out.txt); LB=${LB:-7}
+EXPECTED=$(osascript <watcher-dir>/scripts/count_inbox_window.applescript "$LB")   # Mail.app, same window
+GOT=$(grep -c '^---MSG---' /tmp/5pm_fetch_out.txt)
+echo "harvested $GOT, Mail.app reports $EXPECTED in the same ${LB}h window"
+
+# Retry when the marker is missing OR the harvest is under half of ground truth
+# (filters drop newsletters, so equality is not expected).
+if ! grep -q "===EMAILS===" /tmp/5pm_fetch_out.txt || \
+   { [ "${EXPECTED:-0}" -gt 3 ] && [ "$GOT" -lt $(( EXPECTED / 2 )) ]; }; then
+  sleep 20 && osascript /tmp/5pm_fetch.applescript > /tmp/5pm_fetch_out.txt 2>&1
+fi
 ```
+
+**Why the guard reads the window from the script.** A first version counted Mail.app over a fixed 55-hour window and compared it with a script that used 7 hours. It reported a shortfall every day and retried uselessly, which trains you to ignore it. A guard that measures a different window than the job it guards is worse than no guard.
+
+**Why a ground-truth count at all.** Checking only that the `===EMAILS===` marker exists passes a partial harvest: a cold Mail.app once returned 1 of 18 messages with the marker present. Presence is not completeness.
+
+**Know the cap.** The fetch script caps the number of messages it returns. On a wide catch-up window the cap silently drops the oldest end; widen it deliberately when you reach back several days.
 
 Then fetch sent emails separately:
 
@@ -188,6 +211,24 @@ Record both numbers and the Sent : Inbox ratio in the QA section's "Email-DB tel
 
 These four checks (today-sent match, today-inbox match, sent enumeration cross-check, YTD telemetry) are printed in Step 9's QA section in the digest. They are not optional.
 
+### Step 1b.2: Attachment reconciliation (DB-driven, mandatory)
+
+The email archive stores `has_attachments` and `attachment_names` for every message, so it is the worklist for attachments, not the fetch script's `Attachments:` lines. Query the last four days (so weekend arrivals and any skipped run are swept up):
+
+```bash
+sqlite3 -separator ' | ' <watcher-dir>/email-archive.db "
+SELECT substr(date,1,10), sender_name, substr(subject,1,45), attachment_names
+FROM emails WHERE mailbox='Inbox' AND has_attachments=1
+  AND date >= date('now','localtime','-4 days')
+  AND (attachment_names LIKE '%.pdf%' OR attachment_names LIKE '%.docx%'
+       OR attachment_names LIKE '%.pptx%' OR attachment_names LIKE '%.xlsx%')
+ORDER BY date;"
+```
+
+Put every document in exactly one bucket and record the result in the QA section: **synthesised** (cite the `Synthesis.md`), **to do this run** (becomes a Step 2b task), **already covered** (a re-sent file synthesised earlier), or **skip** (signature images, logos, `.ics`). Nothing may stay unclassified.
+
+**Why.** The older check only verified that attachment folders created today contained a synthesis. An attachment that never got a folder passed that check by definition.
+
 ## Step 1c: Transcribe Voice Memos
 
 Check for any Voice Memos recorded today and transcribe them:
@@ -202,7 +243,14 @@ If the script returns results, treat each transcript as additional context for S
 - Save each full transcript to `00-Inbox/YYYY-MM-DD-voice-memo-<slug>.md`
 - Add a `## Voice Memos` section to the daily digest (after Meetings) listing: memo name, duration hint (from transcript length), and a 1–2 sentence summary
 
-If no memos found or script fails with permissions error, skip silently. Note in digest only if memos were processed.
+Check the exit code. A permissions error and an empty day both print nothing, so "skip silently" lets real memos vanish:
+
+```bash
+python3.13 <watcher-dir>/transcribe_memos.py --days 1 2>/tmp/5pm_memo_err.txt; RC=$?
+[ $RC -ne 0 ] && echo "Step 1c FAILED (rc=$RC): a coverage gap, not 'no memos'" && head -3 /tmp/5pm_memo_err.txt
+```
+
+Exit 0 with no results: genuinely no memos, note it in QA. Non-zero: say so in the digest as a coverage gap.
 
 ## Step 2: Parse and analyse
 
@@ -321,10 +369,18 @@ If none exists, use 7 days ago. Use the file's mtime as the cutoff for `find -ne
 ### 5c.2: Sweep these folders for `.md` files modified since cutoff
 
 ```bash
-find "20-Work/Strategy" "20-Work/Meetings" "30-Projects" "20-Work/Stakeholders" "20-Work/External-People" \
-  -name "*.md" -newer "$LAST_SUMMARY" 2>/dev/null
-find "00-Inbox" -name "*.md" -newer "$LAST_SUMMARY" 2>/dev/null | grep -v "5pm-summary"
+V="<absolute path to your vault>"          # absolute, never relative (see below)
+for d in 20-Work/Strategy 20-Work/Meetings 30-Projects 20-Work/Stakeholders 20-Work/External-People 00-Inbox; do
+  [ -d "$V/$d" ] || echo "sweep root missing: $V/$d, Step 5c results are not trustworthy"
+done
+SWEPT=$(find "$V/20-Work/Strategy" "$V/20-Work/Meetings" "$V/30-Projects" \
+             "$V/20-Work/Stakeholders" "$V/20-Work/External-People" \
+             -name "*.md" -newer "$LAST_SUMMARY" 2>/dev/null)
+INBOX=$(find "$V/00-Inbox" -name "*.md" -newer "$LAST_SUMMARY" 2>/dev/null | grep -v "5pm-summary")
+echo "swept $(printf '%s\n' "$SWEPT" | grep -c .) work files, $(printf '%s\n' "$INBOX" | grep -c .) inbox files"
 ```
+
+**Why absolute paths.** With relative roots, running from any other directory makes `find` fail, `2>/dev/null` hides the error, and the sweep returns zero files. Zero reads exactly like "nothing new was written today". Measured once: relative paths found 0 files, absolute paths found 31. Always report the count; a zero on a working day is a red flag, not a pass.
 
 `30-Projects/Lab-Operations/` is included: the user authors todos directly in `Service-Maintenance-Log.md`, `Procurement-History.md`, `Finance-Tracker.md`, `Lab-Ops-Dashboard.md`, etc.
 
@@ -399,6 +455,10 @@ Open `Dashboard.md` and reconcile against (a) today's emails/meetings/voice/atta
 
 ### 6b.0: Source of truth principle
 Dashboard is the single source of truth for open actions. Source documents (strategy docs, meeting notes, etc.) may also have `- [ ]` items. The two are linked via the `— [[source]]` wikilink suffix. When marking an item `[x]` in Dashboard, also mark `[x]` in the source doc if present (one-way back-sync). When pruning Dashboard, never delete from sources.
+
+### 6b.0b: Rebuilt views never own items
+
+If your Dashboard has a view that is regenerated every day (a "Now" or "Today" block built from the project sections), check it before you regenerate it: every open item in the old view must already exist in a project section. Migrate any that do not, then rebuild. Otherwise an item written straight into the view disappears the next day without anyone deciding it should.
 
 ### 6b.1: Mark items done
 Mark `[x]` when today's evidence confirms completion. Sources of evidence:
@@ -513,7 +573,7 @@ The `===TOMORROW===` block contains the next day's calendar events. For any meet
 
 ## Step 8: Rebuild vault indexes
 
-Regenerate both index files to reflect today's changes:
+Regenerate both index files to reflect today's changes. **Do this with a script, not by hand.** Rebuilding by reading every file kept getting deferred as "low churn", and the index went stale. A deterministic script that parses frontmatter is cheap enough to run every day, which makes the step non-skippable. The two indexes it should produce:
 
 ### 8a: Meetings INDEX.md
 
@@ -665,7 +725,7 @@ Run after the digest is written, before clearing state. Fix any issues found.
 |-------|-----------|
 | **Email coverage** | Count substantive emails (inbox + sent). Verify each is covered in digest. Flag misses. |
 | **Action reconciliation** | For every new `- [ ]` in Dashboard: check sent emails. If you already replied, mark `[x]`. Verify every digest action also appears in Dashboard. Check sent emails for commitments not yet tracked. |
-| **Attachment completeness** | For each `Attachments:` line: verify file saved, markdown conversion exists (DOCX), Synthesis.md exists, surfaced in digest. Capture scope: strategic OR work-relevant (newsletters, reports, meeting prep). |
+| **Attachment completeness (blocking)** | Re-run the Step 1b.2 query. Every document must sit in one bucket with no "to do" left open; each synthesised item has its `Synthesis.md`, appears in the digest, and its actions are on the Dashboard. A folder-based check is only a secondary cross-check: it cannot see an attachment that never got a folder. |
 | **Stakeholder placement** | For any file created/updated today: check org field. People outside your institution → belong in `External-People/`, not `Stakeholders/`. Verify context logs added for all people substantively engaged. |
 | **Calendar completeness** | Every calendar event accounted for in digest. Every `#meeting`/`#talk` note matched and written. Frontmatter complete. |
 | **Sent email coverage** | Every substantive sent email reflected in digest. Commitments tracked as Dashboard actions. New contacts → stakeholder/external-people file created. |
@@ -679,6 +739,20 @@ Run after the digest is written, before clearing state. Fix any issues found.
 **The QA pass MUST be written into the digest's `## QA pass` section** (not just printed in the chat). Use the structure defined in Step 9. After the QA section is written, fix any issues the checks surfaced (correct stale Dashboard items, patch missed emails into the Emails section, escalate stranded actions), then clear state. The QA section is the audit trail; without it, the run did not happen as a QA-d run.
 
 The action-reconciliation check is non-negotiable: for every `- [ ]` Dashboard item added today, grep `/tmp/5pm_sent_today.txt` for evidence of completion before leaving the run. Skipping this step is the most common source of stale open items on Dashboard.
+
+## Step 10.1: Append a run-log (mandatory)
+
+Append one block per run to `.claude/state/5pmsummary-run-log.md` (append-only):
+
+```markdown
+## YYYY-MM-DD (HH:MM), mode: <full|partial:reason>
+- steps_done: 0,1,1b,1b.1,1b.2,1c,2,2b,3,4,5,5c,6,6b,7,8,8c,9,10,10.1
+- steps_skipped: <each with a one-line reason, or "none">
+- counts: emails(in/sent) N/N · meetings N · attachments seen/synthesised N/N · dashboard adds N
+- gaps_flagged: <anything left for a later run, or "none">
+```
+
+This makes "did step X run on day Y?" a one-line `grep`. A partial run that lists what it skipped is an honest run; a "full" run that quietly skipped steps is the failure this log exists to catch.
 
 ## Rules
 

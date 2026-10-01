@@ -4,8 +4,13 @@
   Fetches inbox messages from your configured account with smart lookback:
   - Weekdays: from yesterday 17:00 (catches post-5pm arrivals)
   - Monday: from Friday 17:00 (covers the weekend gap)
+  - Override: FETCH_LOOKBACK_HOURS=<n> (hours back from today 00:00) for
+    catch-up runs. Run the morning after a missed day with the default and
+    the window means "yesterday 17:00 to now", which returns almost nothing.
 
   Output is structured blocks for LLM consumption:
+    ===META===      lookback_hours actually used, so a caller can size its
+                    plausibility check against the same window
     ===EMAILS===    inbox messages, auto-filtered, capped at 40
     ===CALENDAR===  today's events via EventKit Swift binary
     ===NOTES===     Apple Notes modified today with #meeting or #talk prefix
@@ -16,6 +21,7 @@
 
   Usage:
     osascript fetch_day.applescript
+    FETCH_LOOKBACK_HOURS=40 osascript fetch_day.applescript
 
   Adapt:
     - Replace <your-email> in the account filter with your actual address.
@@ -26,7 +32,7 @@
 -- fetch_day.applescript
 -- Fetches inbox emails + calendar events for today
 -- Email lookback: yesterday 17:00 on weekdays, Friday 17:00 on Mondays
--- Output blocks: ===EMAILS===, ===CALENDAR===, ===NOTES===, ===TOMORROW===
+-- Output blocks: ===META===, ===EMAILS===, ===CALENDAR===, ===NOTES===, ===TOMORROW===
 -- Usage: osascript /path/to/fetch_day.applescript
 
 set startOfDay to current date
@@ -42,11 +48,21 @@ set endOfTomorrow to startOfTomorrow + (23 * hours + 59 * minutes + 59)
 -- that arrived after the previous day's 5pm summary. On Monday, reach back to
 -- Friday 17:00 to cover the full weekend gap.
 set todayWeekday to weekday of (current date)
-if todayWeekday is Monday then
+set lookbackHours to 0
+try
+	set envLookback to (system attribute "FETCH_LOOKBACK_HOURS")
+	if envLookback is not "" then set lookbackHours to (envLookback as integer)
+end try
+if lookbackHours > 0 then
+	set emailLookback to startOfDay - (lookbackHours * hours) -- explicit override
+else if todayWeekday is Monday then
+	set lookbackHours to 55
 	set emailLookback to startOfDay - (55 * hours) -- Friday 17:00
 else
+	set lookbackHours to 7
 	set emailLookback to startOfDay - (7 * hours) -- yesterday 17:00
 end if
+set metaOutput to "===META===" & linefeed & "lookback_hours: " & (lookbackHours as string) & linefeed
 
 -- ===== EMAILS =====
 -- Filters out newsletters/automated mail and caps at 40 messages to keep output manageable.
@@ -225,4 +241,4 @@ on error errMsg
 end try
 set tomorrowCalOutput to tomorrowCalOutput & linefeed
 
-return emailOutput & linefeed & calOutput & linefeed & notesOutput & linefeed & tomorrowCalOutput
+return metaOutput & linefeed & emailOutput & linefeed & calOutput & linefeed & notesOutput & linefeed & tomorrowCalOutput

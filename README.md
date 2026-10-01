@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/diagrams/banner.svg" alt="mybrain os — a personal operating system for a knowledge worker" width="100%" />
+  <img src="docs/diagrams/banner.svg" alt="mybrain os, a personal operating system for a knowledge worker" width="100%" />
 </p>
 
 <p align="center">
@@ -88,9 +88,9 @@ flowchart TB
 | | |
 |---|---|
 | **Multiagent model** <br/> One vault, three agents, MCP-shared state. <br/> [`docs/02`](docs/02-multiagent-model.md) | **Hooks & skills** <br/> Lifecycle hooks that protect, classify, inject context. <br/> [`docs/03`](docs/03-hooks-and-skills.md) |
-| **Knowledge wiki** <br/> LLM-as-compiler over Zotero and clippings. <br/> [`docs/04`](docs/04-knowledge-wiki.md) | **Meeting capture** <br/> Plaud, mlx-whisper, pyannote, voice bank. <br/> [`docs/05`](docs/05-meeting-capture.md) |
+| **Knowledge wiki** <br/> LLM-as-compiler over Zotero and clippings. <br/> [`docs/04`](docs/04-knowledge-wiki.md) | **Meeting capture** <br/> Plaud, plaudio, voice bank, speaker ladder. <br/> [`docs/05`](docs/05-meeting-capture.md) |
 | **Vault sync** <br/> iCloud and git mirror, auto-commit launchd. <br/> [`docs/06`](docs/06-vault-sync.md) | **macOS rituals** <br/> AppleScript patterns for Mail, Notes, Calendar. <br/> [`examples/applescript`](examples/applescript/) |
-| **Office automation** <br/> Shared-sheet change tracking, directory-deck generation. <br/> [`docs/07`](docs/07-office-automation.md) | |
+| **Office automation** <br/> Shared-sheet change tracking, directory-deck generation. <br/> [`docs/07`](docs/07-office-automation.md) | **Keeping automations honest** <br/> Liveness vs efficacy checks; the silent failures. <br/> [`docs/08`](docs/08-keeping-automations-honest.md) |
 
 ---
 

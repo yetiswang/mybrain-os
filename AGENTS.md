@@ -16,7 +16,7 @@ Before suggesting anything concrete, ask the user these questions one at a time.
 2. **Agents they already use.** Claude Code, Codex, Cursor, ChatGPT, or none? The `CLAUDE.md` and `.claude/` patterns are specific to Claude Code. The concepts translate; the files do not copy-paste.
 3. **Operating system.** macOS is assumed throughout. On Linux or Windows, the AppleScript integrations, launchd, EventKit, and mlx-whisper on Apple Silicon do not port.
 4. **Which rituals do they actually want to automate?** Morning briefing, end-of-day digest, meeting capture, reading tracking, personal finance. Pick one or two. Do not try to install everything at once.
-5. **Meeting-capture setup.** Plaud device, Zoom recordings, Teams transcripts, Apple Voice Memos, or none? The stack in `docs/05` and `examples/meeting-capture/` is built around specific hardware.
+5. **Meeting-capture setup.** Plaud device, Zoom recordings, Teams transcripts, Apple Voice Memos, or none? The method in `docs/05` works with any recorder; the tooling is the separate [plaudio](https://github.com/yetiswang/plaudio) package (macOS, Apple Silicon).
 6. **Anything clearly not relevant?** No Onyx Boox means skip `/sync-books`. Let them name what to skip.
 
 Once you have answers, synthesise them into a short list: which `docs/` and `examples/` subdirs are worth going deep on this session, and which to skip entirely.
@@ -31,6 +31,7 @@ When the user has no strong preference, walk the docs in this order. The depende
 4. One ritual end-to-end (usually the end-of-day digest pattern from `docs/03`): a tangible win on day one. Abstract architecture does not stick without a working example.
 5. `examples/mcp-servers/`: only if multi-agent was a clear yes. These add coordination overhead; they pay off for specific cross-agent retrieval patterns, not as defaults.
 6. `docs/04-knowledge-wiki.md` and `docs/05-meeting-capture.md`: bigger lifts. Both require a working vault and agent integration. Better suited to a second session.
+7. `docs/08-keeping-automations-honest.md`: as soon as the user has two or more scheduled jobs. Cheap to adopt, and it catches the failures that cost weeks.
 
 ## Build-together pattern
 
@@ -47,7 +48,7 @@ Resist the urge to scaffold five patterns in one session. One working pattern is
 Surface these to the user before proceeding. Do not quietly assume they are fine with them.
 
 - **Paid services.** Plaud requires a subscription for cloud sync and AI summaries. The Claude API key in several scripts is a separate charge from any Claude.ai subscription. Tavily and OpenAI keys appear in some examples. Name these when you encounter them.
-- **Biometric data.** The voice bank in `examples/meeting-capture/` stores speaker voice embeddings. This is biometric data under most privacy frameworks. The user should know what they are storing and where.
+- **Biometric data.** The voice bank built by plaudio (see `docs/05`) stores speaker voice embeddings. This is biometric data under most privacy frameworks. The user should know what they are storing and where.
 - **macOS-only APIs.** AppleScript, EventKit, launchd, mlx-whisper (Apple Silicon), and pyannote-audio are all macOS or Apple Silicon specific. On other platforms, some have partial equivalents (cron for launchd, whisper.cpp for mlx-whisper) and some do not (AppleScript, EventKit). Name the gap.
 - **Stack divergence.** If the user uses Notion instead of Obsidian, Linux instead of macOS, or ChatGPT instead of Claude Code, flag it early. The patterns still apply; the implementation files do not. You will be writing more from scratch than from examples.
 
